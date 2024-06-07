@@ -1,0 +1,657 @@
+openapi: 3.0.0
+info:
+  title: Backend for angular diploma
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: Auth
+  - name: Category
+  - name: Article
+  - name: Request
+  - name: Comment
+  - name: User
+paths:
+  /api/login:
+    post:
+      tags:
+        - Auth
+      summary: Login
+      description: Запрос на авторизацию пользователя. В ответ получаем либо ответ с токенами, либо ответ с ошибкой DefaultResponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: test@gmail.com
+                password: '12345678'
+                rememberMe: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                accessToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE3MzQsImV4cCI6MTY3NTEzNTczNH0.sAW6obIMT-g6_729yCX9CoAjsjcrjk9bAdICz9O8peU
+                refreshToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE3MzQsImV4cCI6MTY3Njg2MzczNH0.yrZhS0HtAUV9QHi7LuutX9qmNWJRHEI7-1yxRH5TMKU
+                userId: 63ca6acb8c79d86eb0ffd7af
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Неправильный E-mail или пароль
+  /api/signup:
+    post:
+      tags:
+        - Auth
+      summary: Sign Up
+      description: Запрос на регистрацию пользователя. В ответ получаем либо ответ с токенами (авторизованный пользователь), либо ответ с ошибкой DefaultResponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Новый
+                email: roman@itlogia.ru
+                password: 12345678Qq
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                accessToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2I1YzVjY2Q3NGRhZmE3MDJkYTc2MyIsImVtYWlsIjoicm9tYW5AaXRsb2dpYS5ydSIsImlhdCI6MTY3NDI3MTgzNiwiZXhwIjoxNjc1MTM1ODM2fQ.1UPBOlwhdrNZAQ1VhPsqUcHaeUMXLz5oIIlSfEC9oK8
+                refreshToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2I1YzVjY2Q3NGRhZmE3MDJkYTc2MyIsImVtYWlsIjoicm9tYW5AaXRsb2dpYS5ydSIsImlhdCI6MTY3NDI3MTgzNiwiZXhwIjoxNjc2ODYzODM2fQ.QpsF_RwU9NYr1talWKeIwQRSkRPcXAt90dNaOT2_43o
+                userId: 63cb5c5ccd74dafa702da763
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: '"firstName" is not allowed'
+  /api/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Refresh
+      description: Запрос на обмен access токена по refresh токену. В ответ получаем либо ответ с токенами, либо ответ с ошибкой DefaultResponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                refreshToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE3MzQsImV4cCI6MTY3Njg2MzczNH0.yrZhS0HtAUV9QHi7LuutX9qmNWJRHEI7-1yxRH5TMKU
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                accessToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE5MTksImV4cCI6MTY3NTEzNTkxOX0.XMvETWuQav4OEz5mBPtbNFB3rTZKb6GFyiNorMi-sN4
+                refreshToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE5MTksImV4cCI6MTY3Njg2MzkxOX0.4T-oi7leWQt_mitFHpJgGkpfmyVreW2pravx-rR6TQ8
+                userId: 63ca6acb8c79d86eb0ffd7af
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Токен не валиден
+  /api/logout:
+    post:
+      tags:
+        - Auth
+      summary: Log Out
+      description: Запрос на разлогинивание пользователя. В ответ получаем либо успешный стандартный ответ DefaultResponse, либо ответ с ошибкой DefaultResponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                refreshToken: >-
+                  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzE5MTksImV4cCI6MTY3Njg2MzkxOX0.4T-oi7leWQt_mitFHpJgGkpfmyVreW2pravx-rR6TQ8
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: false
+                message: Разлогинен успешно
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Пользователя не существует
+  /api/categories:
+    get:
+      tags:
+        - Category
+      summary: Categories
+      description: Запрос на получение всех категорий статей. В ответ получаем массив категорий
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 63ca02683fe296dbe1e873dc
+                  name: Фриланс
+                  url: frilans
+                - id: 63ca02683fe296dbe1e873dd
+                  name: Дизайн
+                  url: dizain
+                - id: 63ca02683fe296dbe1e873de
+                  name: SMM
+                  url: smm
+                - id: 63ca02683fe296dbe1e873df
+                  name: Таргет
+                  url: target
+                - id: 63ca02683fe296dbe1e873e0
+                  name: Копирайтинг
+                  url: kopiraiting
+  /api/articles/top:
+    get:
+      tags:
+        - Article
+      summary: Popular articles
+      description: Запрос на получение популярных статей. В ответ получаем 4 самые популярные статьи
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 63ca02683fe296dbe1e873e2
+                  title: 6 сайтов для повышения  продуктивности
+                  description: >-
+                    Хотите проводить время в сети с пользой? Наша подборка из
+                    шести полезных, но малоизвестных сайтов увеличит вашу
+                    продуктивность, поможет успевать больше в течение дня и
+                    всегда быть на шаг впереди!
+                  image: testimagepath
+                  date: '2023-01-20T02:54:32.543Z'
+                  category: Фриланс
+                  url: 6_saitov_dlya_povisheniya__produktivnosti
+                - id: 63ca02683fe296dbe1e873e3
+                  title: Как произвести впечатление на нового клиента?
+                  description: >-
+                    Поиск новых клиентов — это сложная задача не только для
+                    новичков, но и для опытных специалистов. Мы расскажем, как
+                    справиться с волнением, завоевать доверие клиента и
+                    произвести на него потрясающее первое впечатление.
+                  image: testimagepath
+                  date: '2023-01-20T02:54:32.543Z'
+                  category: Таргет
+                  url: kak_proizvesti_vpechatlenie_na_novogo_klienta?
+                - id: 63ca02683fe296dbe1e873e4
+                  title: Как бороться с конкуренцией на фрилансе?
+                  description: >-
+                    Конкуренция — это часть нашей жизни. Мы боремся за место
+                    работы, за победу на конкурсе и даже за возможность купить
+                    последний круассан в любимом кафе. Фриланс не исключение.
+                  image: testimagepath
+                  date: '2023-01-20T02:54:32.543Z'
+                  category: Фриланс
+                  url: kak_borotsya_s_konkurentsiei_na_frilanse?
+  /api/articles/related/{url}:
+    get:
+      parameters:
+        - in: path
+          name: url
+          schema:
+            type: string
+          required: true
+          description: url статьи, для которой ищем связанные
+      tags:
+        - Article
+      summary: Related articles
+      description: Запрос на получение связанных статей для определенной статьи. В ответ получаем 2 статьи
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - id: 63ca02683fe296dbe1e873e4
+                  title: Как бороться с конкуренцией на фрилансе?
+                  description: >-
+                    Конкуренция — это часть нашей жизни. Мы боремся за место
+                    работы, за победу на конкурсе и даже за возможность купить
+                    последний круассан в любимом кафе. Фриланс не исключение.
+                  image: testimagepath
+                  date: '2023-01-20T02:54:32.543Z'
+                  category: Фриланс
+                  url: kak_borotsya_s_konkurentsiei_na_frilanse?
+  /api/articles:
+    get:
+      tags:
+        - Article
+      summary: Get articles
+      description: Запрос на получение всех статей. В параметрах можно передавать категории а также страницу пагинации. Возвращает количество всех статей, количество страниц, а также массив статей.
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          example: '1'
+        - name: categories[]
+          in: query
+          schema:
+            type: string
+          example: frilans
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                count: 2
+                pages: 1
+                items:
+                  - id: 63ca02683fe296dbe1e873e2
+                    title: 6 сайтов для повышения  продуктивности
+                    description: >-
+                      Хотите проводить время в сети с пользой? Наша подборка из
+                      шести полезных, но малоизвестных сайтов увеличит вашу
+                      продуктивность, поможет успевать больше в течение дня и
+                      всегда быть на шаг впереди!
+                    image: testimagepath
+                    date: '2023-01-20T02:54:32.543Z'
+                    category: Фриланс
+                    url: 6_saitov_dlya_povisheniya__produktivnosti
+                  - id: 63ca02683fe296dbe1e873e4
+                    title: Как бороться с конкуренцией на фрилансе?
+                    description: >-
+                      Конкуренция — это часть нашей жизни. Мы боремся за место
+                      работы, за победу на конкурсе и даже за возможность купить
+                      последний круассан в любимом кафе. Фриланс не исключение.
+                    image: testimagepath
+                    date: '2023-01-20T02:54:32.543Z'
+                    category: Фриланс
+                    url: kak_borotsya_s_konkurentsiei_na_frilanse?
+  /api/articles/{url}:
+    get:
+      parameters:
+        - in: path
+          name: url
+          schema:
+            type: string
+          required: true
+          description: url статьи
+      tags:
+        - Article
+      summary: Get article
+      description: Запрос на получение детальной информации по статье
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                text: >-
+                  Хотите проводить время в сети с пользой? Наша
+                  подборка из шести полезных, но малоизвестных сайтов увеличит
+                  вашу продуктивность, поможет успевать больше в течение дня и
+                  всегда быть на шаг впереди!
+                comments:
+                  - id: 63ca5930795043eaae33dcb7
+                    text: >-
+                      Вот это классная статья6! Спасибо за полезную
+                      информацию!!!
+                    date: '2023-01-20T09:04:48.201Z'
+                    likesCount: 0
+                    dislikesCount: 0
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+                  - id: 63ca592d795043eaae33dcb4
+                    text: >-
+                      Вот это классная статья5! Спасибо за полезную
+                      информацию!!!
+                    date: '2023-01-20T09:04:45.870Z'
+                    likesCount: 0
+                    dislikesCount: 0
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+                  - id: 63ca592b795043eaae33dcb1
+                    text: >-
+                      Вот это классная статья4! Спасибо за полезную
+                      информацию!!!
+                    date: '2023-01-20T09:04:43.603Z'
+                    likesCount: 0
+                    dislikesCount: 0
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+                commentsCount: 8
+                id: 63ca02683fe296dbe1e873e2
+                title: 6 сайтов для повышения  продуктивности
+                description: >-
+                  Хотите проводить время в сети с пользой? Наша подборка из
+                  шести полезных, но малоизвестных сайтов увеличит вашу
+                  продуктивность, поможет успевать больше в течение дня и всегда
+                  быть на шаг впереди!
+                image: testimagepath
+                date: '2023-01-20T02:54:32.543Z'
+                category: Фриланс
+                url: 6_saitov_dlya_povisheniya__produktivnosti
+  /api/requests:
+    post:
+      tags:
+        - Request
+      summary: New Request
+      description: "Запрос на добавление нового запроса от пользователя. Запрос поддерживает 2 варианта: в первом варианте можно отправить только имя и номер телефона, при этом указываем type=consultation; во втором варианте необходимо отправлять type=order и поле service с названием услуги. В ответ получаем DefaultResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: Test
+                phone: '+79773737373'
+                service: Фриланс
+                type: order
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: false
+                message: Запрос успешно отправлен!
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Необходимо заполнить "Услуга"
+  /api/comments:
+    get:
+      tags:
+        - Comment
+      summary: Get comments
+      description: Запрос на загрузку комментариев к статье. Передаем количество комментариев, которые надо пропустить, а также id статьи
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          example: '3'
+        - name: article
+          in: query
+          schema:
+            type: string
+          example: 63ca02683fe296dbe1e873e2
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                allCount: 6
+                comments:
+                  - id: 63ca5925795043eaae33dcae
+                    text: >-
+                      Вот это классная статья3! Спасибо за полезную
+                      информацию!!!
+                    date: '2023-01-20T09:04:37.390Z'
+                    likesCount: 1
+                    dislikesCount: 1
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+                  - id: 63ca5920795043eaae33dcab
+                    text: >-
+                      Вот это классная статья2! Спасибо за полезную
+                      информацию!!!
+                    date: '2023-01-20T09:04:32.975Z'
+                    likesCount: 0
+                    dislikesCount: 0
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+                  - id: 63ca579e8deff916216c6073
+                    text: Вот это классная статья! Спасибо за полезную информацию!!!
+                    date: '2023-01-20T08:58:06.256Z'
+                    likesCount: 0
+                    dislikesCount: 0
+                    user:
+                      id: 63ca6acb8c79d86eb0ffd7af
+                      name: Тест
+    post:
+      tags:
+        - Comment
+      summary: Add comment
+      description: Запрос на добавление нового комментария. Необходимо передавать авторизационный заголовок с access токеном. В ответ получаем DefaultResponse
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                text: Вот это классная статья6! Спасибо за полезную информацию!!!
+                article: 63ca02683fe296dbe1e873e2
+      parameters:
+        - name: x-auth
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzIxMTIsImV4cCI6MTY3NTEzNjExMn0.NdDju6uK_WAz-0CsFwlKwMiBpRFtaW2WTNPEheN_Ljk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: false
+                message: Комментарий добавлен!
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Пользователь не найден
+  /api/comments/{id}/apply-action:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: id комментария
+    post:
+      tags:
+        - Comment
+      summary: Apply action
+      description: "Запрос на применение действия для комментария. Возможные варианты для action в body: like, dislike, violate Необходимо передавать авторизационный заголовок с access токеном. В ответ получаем DefaultResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+      parameters:
+        - name: x-auth
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzIxMTIsImV4cCI6MTY3NTEzNjExMn0.NdDju6uK_WAz-0CsFwlKwMiBpRFtaW2WTNPEheN_Ljk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: false
+                message: Успешное действие!
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: Это действие уже применено к комментарию
+  /api/comments/{id}/actions:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+        description: id комментария
+    get:
+      tags:
+        - Comment
+      summary: Get Actions for comment
+      description: "Запрос на получение действий пользователя для комментария. Необходимо передавать авторизационный заголовок с access токеном. В ответ получаем DefaultResponse в случае неудачи, либо же массив действий пользователя (кроме violate)"
+      parameters:
+        - name: x-auth
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzIxMTIsImV4cCI6MTY3NTEzNjExMn0.NdDju6uK_WAz-0CsFwlKwMiBpRFtaW2WTNPEheN_Ljk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - comment: 63ca5925795043eaae33dcae
+                  action: like
+  /api/comments/article-comment-actions:
+    get:
+      tags:
+        - Comment
+      summary: Get article comment actions for user
+      description: "Запрос на получение действий пользователя для всех комментариев в рамках одной статьи. Необходимо передавать авторизационный заголовок с access токеном. В ответ получаем DefaultResponse в случае неудачи, либо же массив действий пользователя (кроме violate) для комментариев."
+      parameters:
+        - name: x-auth
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzIxMTIsImV4cCI6MTY3NTEzNjExMn0.NdDju6uK_WAz-0CsFwlKwMiBpRFtaW2WTNPEheN_Ljk
+        - name: articleId
+          in: query
+          schema:
+            type: string
+          example: 63cce8a9fe3b9042ff7c79e5
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                - comment: 63ca5925795043eaae33dcae
+                  action: like
+                - comment: 63ca592b795043eaae33dcb1
+                  action: like
+
+  /api/users:
+    get:
+      tags:
+        - User
+      summary: Get User Info
+      description: "Получение информации о пользователе. Необходимо передавать авторизационный заголовок с access токеном. В ответ получаем DefaultResponse в случае неудачи, либо же данные пользователя"
+      parameters:
+        - name: x-auth
+          in: header
+          schema:
+            type: string
+          example: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzY2E2YWNiOGM3OWQ4NmViMGZmZDdhZiIsImVtYWlsIjoidGVzdEBnbWFpbC5jb20iLCJpYXQiOjE2NzQyNzIxMTIsImV4cCI6MTY3NTEzNjExMn0.NdDju6uK_WAz-0CsFwlKwMiBpRFtaW2WTNPEheN_Ljk
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                id: 63ca6acb8c79d86eb0ffd7af
+                name: Тест
+                email: test@gmail.com
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                error: true
+                message: invalid token
+components:
+  schemas:
+    DefaultResponse:
+      type: object
+      properties:
+        error:
+          type: boolean
+        message:
+          type: string

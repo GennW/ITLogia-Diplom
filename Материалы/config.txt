@@ -1,0 +1,10 @@
+
+запуск sudo systemctl start mongod
+Убедитесь, что MongoDB успешно запустился
+sudo systemctl status mongod
+
+перенос данных в новую БД
+migrate-mongo up
+ 
+ если ошибка
+npm install cyrillic-to-translit-js
