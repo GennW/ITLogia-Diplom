@@ -1,0 +1,37 @@
+<section class="login" [formGroup]="loginForm">
+    <div class="container">
+        <div class="auth-form">
+            <div class="auth-title">Войти в личный кабинет</div>
+            <div class="auth-inputs">
+                <div class="auth-input">
+                    <input type="text" class="input" 
+                    formControlName="email"
+                    [ngStyle]="{'border-color': loginForm.get('email')?.invalid
+                        && (loginForm.get('email')?.touched || loginForm.get('email')?.dirty) ? 'red' : ''}"
+                    placeholder="Электронная почта">
+                </div>
+                <div class="auth-input">
+                    <input type="password" class="input" 
+                    [ngStyle]="{'border-color': loginForm.get('password')?.invalid
+                        && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty) ? 'red' : ''}"
+                    formControlName="password"
+                    placeholder="Пароль">
+                </div>
+                <div class="auth-checkbox">
+                    <input type="checkbox" id="remember"  
+                    formControlName="rememberMe">
+                    <label for="remember">Запомнить меня</label>
+                </div>
+            </div>
+            <div class="auth-btn">
+                <button class="btn" [disabled]="loginForm.invalid" (click)="login()">Войти</button>
+            </div>
+            <div class="auth-link">
+                Нет аккаунта? <a routerLink="/signup">Пройдите регистрацию</a>
+            </div>
+        </div>
+        <div class="page-img">
+            <img src="/assets/images/pages/login-image.png" alt="img">
+        </div>
+    </div>
+</section>

@@ -8,3 +8,6 @@ migrate-mongo up
  
  если ошибка
 npm install cyrillic-to-translit-js
+
+
+1:10:55 Модуль №13. УРОК №2 регистрация

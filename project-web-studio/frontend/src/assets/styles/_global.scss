@@ -8,21 +8,25 @@ body {
     color: #071739;
 }
 
+a:visited {
+    color: #071739;
+}
+
 .container {
     max-width: $container-width;
     margin: 0 auto;
 }
 
-// input {
-//     box-sizing: border-box;
-//     padding: 17px 20px;
-//     border: 2px solid #2A592E;
-//     border-radius: 3px;
-//     font-family: 'Lora', sans-serif;
-//     font-weight: 400;
-//     font-size: 14px;
-//     color: $grey-text-color;
-// }
+input {
+    box-sizing: border-box;
+    padding: 17px 20px;
+    border: 2px solid $blue-text-color;
+    border-radius: 3px;
+    font-family: 'Lora', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    color: #A8ABA7;
+}
 
 .btn {
     text-align: center;
@@ -174,6 +178,7 @@ a.button {
 }
 
 
-.mat-progress-spinner circle, .mat-spinner circle {
+.mat-progress-spinner circle,
+.mat-spinner circle {
     stroke: #6CAC72;
 }

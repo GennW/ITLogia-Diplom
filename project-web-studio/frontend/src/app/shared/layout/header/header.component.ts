@@ -1,4 +1,9 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { AuthService } from 'src/app/core/auth/auth.service';
+import { DefaultResponseType } from 'src/types/default-response';
 
 @Component({
   selector: 'app-header',
@@ -6,10 +11,40 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnInit {
+  isLogged: boolean = false;
 
-  constructor() { }
+  constructor(private authService: AuthService, private _snackBar: MatSnackBar, private router: Router) {
+    // запрашиваем первоначальное состояние пользователя
+    this.isLogged = this.authService.getIsLogIn();
+  }
 
   ngOnInit(): void {
+    // актуальное состояние пользователя
+    this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
+      this.isLogged = isLoggedIn;
+    })
+  }
+
+  logout(): void {
+    this.authService.logout()
+      .subscribe({
+        next: (data: DefaultResponseType) => {
+
+          // если успешно вышли из системы
+          this.doLogout();
+        },
+        error: () => {
+          this.doLogout();
+        }
+      });
+  }
+
+  doLogout(): void {
+    // если успешно вышли из системы
+    this.authService.removeTokens();
+    this.authService.userId = null;
+    this._snackBar.open('Вы вышли из системы');
+    this.router.navigate(['/'])
   }
 
 }
