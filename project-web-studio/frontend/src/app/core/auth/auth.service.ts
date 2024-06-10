@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
 import { DefaultResponseType } from 'src/types/default-response';
 import { LoginResponseType } from 'src/types/login-response';
@@ -12,6 +12,7 @@ export class AuthService {
   public accessTokenKey: string = 'accessToken';
   public refreshTokenKey: string = 'refreshToken';
   public userIdKey: string = 'userId';
+  
 
   public isLogged$: Subject<boolean> = new Subject<boolean>();
   private isLogged: boolean = false;
@@ -24,6 +25,12 @@ export class AuthService {
   public login(email: string, password: string, rememberMe: boolean): Observable<LoginResponseType | DefaultResponseType> {
     return this.http.post<LoginResponseType | DefaultResponseType>(environment.api + 'login', {
       email, password, rememberMe
+    });
+  }
+
+  public signup(name: string, email: string, password: string): Observable<LoginResponseType | DefaultResponseType> {
+    return this.http.post<LoginResponseType | DefaultResponseType>(environment.api + 'signup', {
+     name, email, password
     });
   }
   
@@ -79,6 +86,13 @@ export class AuthService {
     } else {
       localStorage.removeItem(this.userIdKey);
     }
+  }
+
+  public getUserName(): Observable<{ id: string, name: string, email: string }> {
+    const tokens = this.getTokens();
+    const headers = new HttpHeaders().set('x-auth', tokens.accessToken || '');
+
+    return this.http.get<{ id: string, name: string, email: string }>(environment.api + 'users', { headers });
   }
 
 }

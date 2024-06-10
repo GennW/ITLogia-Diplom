@@ -1,26 +1,35 @@
-<section class="signup">
+<section class="signup" [formGroup]="signupForm">
     <div class="container">
         <div class="auth-form">
             <div class="auth-title">Регистрация на сайте</div>
             <div class="auth-inputs">
                 <div class="auth-input">
-                    <input type="text" class="input" placeholder="Ваше имя">
+                    <input type="text" class="input" placeholder="Ваше имя"
+                    formControlName="name"
+                    [ngStyle]="{'border-color': signupForm.get('name')?.invalid
+                        && (signupForm.get('name')?.touched || signupForm.get('name')?.dirty) ? 'red' : ''}">
                 </div>
                 <div class="auth-input">
-                    <input type="text" class="input" placeholder="Электронная почта">
+                    <input type="text" class="input" placeholder="Электронная почта"
+                    formControlName="email"
+                    [ngStyle]="{'border-color': signupForm.get('email')?.invalid
+                        && (signupForm.get('email')?.touched || signupForm.get('email')?.dirty) ? 'red' : ''}">
                 </div>
                 <div class="auth-input">
-                    <input type="password" class="input" placeholder="Пароль">
+                    <input type="password" class="input" placeholder="Пароль"
+                    formControlName="password"
+                    [ngStyle]="{'border-color': signupForm.get('password')?.invalid
+                        && (signupForm.get('password')?.touched || signupForm.get('password')?.dirty) ? 'red' : ''}">
                 </div>
                 <div class="auth-checkbox">
-                    <input type="checkbox" id="remember">
+                    <input type="checkbox" id="agree" formControlName="agree">
                     <label for="remember">Я принимаю <a href="#!">условия пользовательского соглашения</a> и даю 
                         <a href="#!">согласие на обработку персональных данных.</a>
                     </label>
                 </div>
             </div>
             <div class="auth-btn">
-                <button class="btn">Войти</button>
+                <button class="btn" [disabled]="signupForm.invalid" (click)="signUp()">Войти</button>
             </div>
             <div class="auth-link">
                 Уже есть аккаунт? <a routerLink="/login">Войдите</a>

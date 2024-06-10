@@ -12,17 +12,28 @@ import { DefaultResponseType } from 'src/types/default-response';
 })
 export class HeaderComponent implements OnInit {
   isLogged: boolean = false;
+  userName: string = '';
 
   constructor(private authService: AuthService, private _snackBar: MatSnackBar, private router: Router) {
     // запрашиваем первоначальное состояние пользователя
     this.isLogged = this.authService.getIsLogIn();
+    
   }
 
-  ngOnInit(): void {
+  ngOnInit(): void {  
     // актуальное состояние пользователя
     this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
       this.isLogged = isLoggedIn;
-    })
+    });
+
+    if (this.isLogged) {
+      this.authService.getUserName().subscribe(
+  (userData: { id: string, name: string, email: string }) => {
+    // получаем имя пользователя
+    this.userName = userData.name;
+  }
+);
+}
   }
 
   logout(): void {
