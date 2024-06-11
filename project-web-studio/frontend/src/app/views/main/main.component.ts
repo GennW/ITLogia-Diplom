@@ -25,6 +25,28 @@ export class MainComponent implements OnInit {
     },
     nav: false
   }
+  customOptionsReview: OwlOptions = {
+    loop: true,
+    mouseDrag: false,
+    touchDrag: false,
+    pullDrag: false,
+    margin: 25,
+    dots: false, 
+    navSpeed: 700,
+    navText: ['', ''],
+    responsive: {
+      0: {
+        items: 1
+      },
+      400: {
+        items: 2
+      },
+      740: {
+        items: 3
+      }
+    },
+    nav: false
+  }
 
   topArticles: TopArticleType[] = [];
 
@@ -32,11 +54,15 @@ export class MainComponent implements OnInit {
 
   ngOnInit(): void {
     this.topArticleService.getTopArticles()
-    .subscribe({
-      next: ((data: TopArticleType[]) => {
-        this.topArticles = data;
-      })
-    })
-  }
+      .subscribe({
+        next: ((data: TopArticleType[]) => {
+          this.topArticles = data;
+        }),
+        error: ((error: any) => {
+          console.error('An error occurred:', error);
+        })
+      });
+   }
+   
 
 }
