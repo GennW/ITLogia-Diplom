@@ -1,0 +1,221 @@
+@import "../../../assets/styles/variables";
+@import "../../../assets/styles/mixins";
+
+.main {
+  margin-bottom: 120px;
+
+  .container {
+    .carousel-item {
+      position: relative;
+      .main-banner {
+        margin: 0 auto;
+        height: 490px;
+        background-position: center;
+        background-size: cover;
+
+        .main-banner-content {
+          display: grid;
+          padding-left: 80px;
+          padding-top: 100px;
+
+          .main-banner-pre-title {
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 12px;
+            color: #709fdc;
+          }
+          .main-banner-title {
+            font-family: "Lora", sans-serif;
+            font-weight: 400;
+            font-size: 50px;
+            color: #fff;
+            line-height: 130%;
+            width: 610px;
+
+            span {
+              color: #709fdc;
+            }
+          }
+          .maim-banner-text {
+            width: 456px;
+            font-size: 24px;
+            line-height: 130%;
+            color: #fff;
+            margin-top: 20px;
+          }
+          .btn {
+          }
+          .btn-banner {
+            margin-top: 40px;
+            width: 163px;
+            padding: 15px 33px;
+            box-sizing: border-box;
+            color: #fff;
+          }
+        }
+      }
+      .move-backward {
+        cursor: pointer;
+        position: absolute;
+        z-index: 1;
+        top: calc(522px - 50%);
+        left: 11px;
+      }
+      .move-forward {
+        cursor: pointer;
+        position: absolute;
+        z-index: 1;
+        top: calc(522px - 50%);
+        right: 11px;
+      }
+    }
+  }
+}
+
+// наши услуги
+.services {
+  margin-bottom: 120px;
+  color: #709fdc;
+  .container {
+    .services-content {
+      .services-content-title {
+        @include head-lora-38;
+        margin-bottom: 40px;
+      }
+      .services-content-wrapper {
+        display: flex;
+        gap: 25px;
+        .services-content-card {
+          height: 498px;
+          width: 290px;
+          display: grid;
+          img {
+          }
+          .services-content-card-title {
+            margin-top: 15px;
+            margin-bottom: 10px;
+            font-size: 20px;
+          }
+          .services-content-card-text {
+            color: #071739;
+            font-size: 14px;
+            margin-bottom: 15px;
+            height: 90px;
+          }
+          .services-content-card-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .services-content-card-price {
+              font-size: 20px;
+              font-weight: 500;
+            }
+            .services-content-card-btn {
+              color: #fff;
+              width: 163px;
+              height: 51px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// кто и чем
+.about {
+  margin-bottom: 120px;
+  .container {
+    .about-wrapper {
+      display: flex;
+      .about-img {
+        margin-right: 68px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        height: 453px;
+      }
+      .about-content {
+        max-width: 704px;
+        font-size: 14px;
+        .about-content-about {
+          .about-content-title {
+            @include head-lora-38;
+          }
+          .about-content-tooltip {
+            margin-top: 20px;
+            margin-right: 40px;
+            width: 633px;
+            span {
+              font-weight: 500;
+            }
+          }
+        }
+        .about-content-advantages-wrapper {
+          .about-content-advantages-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            @include head-lora-38;
+            font-size: 26px;
+          }
+          .about-content-advantage-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px 71px;
+            .about-content-advantage-block {
+              .about-content-advantage {
+                display: flex;
+                align-items: center;
+
+                img {
+                  margin-right: 20px;
+                }
+                .about-content-advantage-text {
+                  width: 256px;
+                  span {
+                    font-weight: 500;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// статьи
+.articles {
+  margin-bottom: 120px;
+  .container {
+    .articles-title {
+      @include head-lora-38;
+      margin-bottom: 40px;
+    }
+    .articles-content {
+    }
+    .articles-link {
+      margin-left: 1000px;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 195px;
+
+      .articles-link-text {
+        font-weight: 500;
+        font-size: 20px;
+        width: 165px;
+        color: #709fdc;
+      }
+      svg {
+      }
+    }
+
+}
+}
+
+

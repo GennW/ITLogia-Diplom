@@ -9,6 +9,10 @@ import { FooterComponent } from './shared/layout/footer/footer.component';
 import { MainComponent } from './views/main/main.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { CarouselModule } from 'ngx-owl-carousel-o';
+import { ArticleCardComponent } from './shared/components/article-card/article-card.component';
+
 
 @NgModule({
   declarations: [
@@ -16,14 +20,20 @@ import { HttpClientModule } from '@angular/common/http';
     LayoutComponent,
     HeaderComponent,
     FooterComponent,
-    MainComponent
+    MainComponent,
+    ArticleCardComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     MatSnackBarModule,
+    MatTooltipModule,
+    BrowserAnimationsModule,
+    CarouselModule,
+
+
     AppRoutingModule,
-    BrowserAnimationsModule
+    
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}

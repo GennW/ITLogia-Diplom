@@ -1,0 +1,39 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+.article-card {
+  color: #709fdc;
+  display: grid;
+  width: 292px;
+  height: 571px;
+  position: relative;
+
+  .article-card-specialization {
+    position: absolute;
+    right: 9px;
+    top: 10px;
+    background: #ffffff;
+    border-radius: 5px;
+    padding: 10px 18px;
+  }
+  .article-card-img {
+    width: 291px;
+    height: 291px;
+    background-size: cover;
+    background-position: center;
+  }
+  .article-card-title {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    font-size: 20px;
+  }
+  .article-card-text {
+    font-size: 14px;
+    color: #071739;
+  }
+  .article-card-link {
+    margin-top: auto;
+    cursor: pointer;
+  }
+}

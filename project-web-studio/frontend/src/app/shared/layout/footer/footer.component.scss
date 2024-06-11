@@ -4,13 +4,13 @@
 .footer {
   background-color: #B9D5FD;
   padding: 40px 0;
+  width: 100%;
 
   .container {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: flex-start;
-    width: 916px;
 
     .footer-menu {
       display: flex;
@@ -47,6 +47,7 @@
       align-items: baseline;
       width: 916px;
       margin-top: 40px;
+      margin-right: 100px;
 
       .footer-contact {
         display: grid;

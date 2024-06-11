@@ -1,184 +1,198 @@
 html,
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
-    font-size: 16px;
-    color: #071739;
+  margin: 0;
+  padding: 0;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: #071739;
 }
 
 a:visited {
-    color: #071739;
+  color: #071739;
 }
 
 .container {
-    max-width: $container-width;
-    margin: 0 auto;
+  max-width: $container-width;
+  margin: 0 auto;
 }
 
 input {
-    box-sizing: border-box;
-    padding: 17px 20px;
-    border: 2px solid $blue-text-color;
-    border-radius: 3px;
-    font-family: 'Lora', sans-serif;
-    font-weight: 400;
-    font-size: 14px;
-    color: #A8ABA7;
+  box-sizing: border-box;
+  padding: 17px 20px;
+  border: 2px solid $blue-text-color;
+  border-radius: 3px;
+  font-family: "Lora", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: #a8aba7;
 }
 
 .btn {
-    text-align: center;
-    background: #709FDC;
-    border-radius: 5px;
-    box-sizing: border-box;
-    cursor: pointer;
-    border: 0;
-    color: white;
+  text-align: center;
+  background: #709fdc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  cursor: pointer;
+  border: 0;
+  color: white;
 
-    &.button-transparent {
-        background-color: transparent;
-        border: 1px solid #6CAC72;
+  &.button-transparent {
+    background-color: transparent;
+    border: 1px solid #6cac72;
+  }
+
+  &.button-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      margin-left: 16px;
+    }
+  }
+
+  &:disabled {
+    background: gray;
+    cursor: not-allowed;
+  }
+
+  &.button-in-cart span {
+    &:first-child {
+      display: block;
     }
 
-    &.button-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        span {
-            margin-left: 16px;
-        }
+    &:last-child {
+      display: none;
     }
+  }
 
-    &:disabled {
-        background: gray;
-        cursor: not-allowed;
-    }
-
+  &:hover {
     &.button-in-cart span {
-        &:first-child {
-            display: block;
-        }
+      &:first-child {
+        display: none;
+      }
 
-        &:last-child {
-            display: none;
-        }
+      &:last-child {
+        display: block;
+      }
     }
-
-    &:hover {
-        &.button-in-cart span {
-            &:first-child {
-                display: none;
-            }
-
-            &:last-child {
-                display: block;
-            }
-        }
-    }
+  }
 }
 
 a.button {
-    text-decoration: none;
-    display: inline-block;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .mat-menu-item {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 400;
 
-    a {
-        text-decoration: none;
-        color: $grey-text-color;
-    }
+  a {
+    text-decoration: none;
+    color: $grey-text-color;
+  }
 }
 
 .corousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 50px;
+
+  .corousel-title {
+    // @include head-lora-32;
+  }
+
+  .corousel-arrows {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin-bottom: 50px;
+    justify-content: center;
 
-    .corousel-title {
-        // @include head-lora-32;
+    a {
+      cursor: pointer;
+
+      &:first-child {
+        margin-right: 30px;
+      }
     }
-
-    .corousel-arrows {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        a {
-            cursor: pointer;
-
-            &:first-child {
-                margin-right: 30px;
-            }
-        }
-    }
+  }
 }
 
 // радиокнопки
 [type="radio"]:checked,
 [type="radio"]:not(:checked) {
-    position: absolute;
-    left: -9999px;
+  position: absolute;
+  left: -9999px;
 }
 
-[type="radio"]:checked+label,
-[type="radio"]:not(:checked)+label {
-    position: relative;
-    padding-left: 28px;
-    cursor: pointer;
-    line-height: 20px;
-    display: inline-block;
-    color: #666;
+[type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label {
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+  line-height: 20px;
+  display: inline-block;
+  color: #666;
 }
 
-[type="radio"]:checked+label:before,
-[type="radio"]:not(:checked)+label:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 18px;
-    height: 18px;
-    border: 2px solid #ddd;
-    border-radius: 100%;
-    background: #fff;
-    box-sizing: border-box;
+[type="radio"]:checked + label:before,
+[type="radio"]:not(:checked) + label:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #ddd;
+  border-radius: 100%;
+  background: #fff;
+  box-sizing: border-box;
 }
 
-[type="radio"]:checked+label:after,
-[type="radio"]:not(:checked)+label:after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background: #2A592E;
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    border-radius: 100%;
-    -webkit-transition: all 0.2s ease;
-    transition: all 0.2s ease;
+[type="radio"]:checked + label:after,
+[type="radio"]:not(:checked) + label:after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: #2a592e;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  border-radius: 100%;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-[type="radio"]:not(:checked)+label:after {
-    opacity: 0;
-    -webkit-transform: scale(0);
-    transform: scale(0);
+[type="radio"]:not(:checked) + label:after {
+  opacity: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0);
 }
 
-[type="radio"]:checked+label:after {
-    opacity: 1;
-    -webkit-transform: scale(1);
-    transform: scale(1);
+[type="radio"]:checked + label:after {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
 }
-
 
 .mat-progress-spinner circle,
 .mat-spinner circle {
-    stroke: #6CAC72;
+  stroke: #6cac72;
+}
+
+.owl-theme .owl-nav.disabled + .owl-dots {
+  position: relative;
+  margin-top: -30px !important;
+  z-index: 1;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+  background: #ffffff;
+}
+.owl-theme .owl-dots .owl-dot span {
+    border: 1px solid #FFFFFF;
+    background: transparent;
 }
