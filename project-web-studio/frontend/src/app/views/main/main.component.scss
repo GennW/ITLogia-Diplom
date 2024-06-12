@@ -305,6 +305,7 @@
 
       .corousel-arrows {
         .move-backward {
+          cursor: pointer;
           position: absolute;
           top: 50%;
           left: -30px;
@@ -312,6 +313,7 @@
         }
 
         .move-forward {
+          cursor: pointer;
           position: absolute;
           top: 50%;
           right: -25px;
@@ -320,4 +322,65 @@
       }
     }
   }
+}
+
+// контакты
+.contacts {
+  margin-bottom: 120px;
+
+  .container {
+    .contacts-wrapper {
+      display: flex;
+      align-items: flex-start;
+
+      .contacts-map {
+        margin-right: 26px;
+
+        iframe {
+          vertical-align: bottom;
+        }
+      }
+
+      .contacts-info {
+        .contacts-info-title {
+          @include head-lora-38;
+          margin-bottom: 20px;
+
+        }
+
+        .contacts-info-block {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+
+          .contact-info {
+            .contact-info-title {
+              color: #709FDC;
+              font-weight: 500;
+              margin-bottom: 10px;
+            }
+
+            .contact-info-text {
+              color: #071739;
+              font-size: 14px;
+
+              a {
+                text-decoration: none;
+                color: #071739;
+
+              }
+            }
+
+            .contact-info-social {
+              display: flex;
+              align-items: center;
+              justify-content: start;
+              gap: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
