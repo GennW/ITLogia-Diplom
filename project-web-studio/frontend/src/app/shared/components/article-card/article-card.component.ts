@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { environment } from 'src/environments/environment';
 import { TopArticleType } from 'src/types/top-articles.type';
 
 @Component({
@@ -8,6 +9,7 @@ import { TopArticleType } from 'src/types/top-articles.type';
 })
 export class ArticleCardComponent implements OnInit {
   @Input() topArticle!: TopArticleType;
+  serverStaticPath = environment.serverStaticPath;
 
   constructor() { }
 

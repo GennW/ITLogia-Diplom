@@ -12,7 +12,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { ArticleCardComponent } from './shared/components/article-card/article-card.component';
-
+import {MatDialogModule} from '@angular/material/dialog';
+import { PopupComponent } from './shared/components/popup/popup.component'; 
 
 @NgModule({
   declarations: [
@@ -21,12 +22,14 @@ import { ArticleCardComponent } from './shared/components/article-card/article-c
     HeaderComponent,
     FooterComponent,
     MainComponent,
-    ArticleCardComponent
+    ArticleCardComponent,
+    PopupComponent
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     MatSnackBarModule,
+    MatDialogModule,
     MatTooltipModule,
     BrowserAnimationsModule,
     CarouselModule,

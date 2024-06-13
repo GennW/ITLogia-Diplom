@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { TopArticleService } from 'src/app/shared/services/top-article.service';
 import { TopArticleType } from 'src/types/top-articles.type';
@@ -25,18 +26,44 @@ export class MainComponent implements OnInit {
     },
     nav: false
   }
+  customOptionsReview: OwlOptions = {
+    loop: true,
+    mouseDrag: false,
+    touchDrag: false,
+    pullDrag: false,
+    margin: 25,
+    dots: false, 
+    navSpeed: 700,
+    navText: ['', ''],
+    responsive: {
+      0: {
+        items: 1
+      },
+      400: {
+        items: 2
+      },
+      740: {
+        items: 3
+      }
+    },
+    nav: false
+  }
 
   topArticles: TopArticleType[] = [];
 
-  constructor(private topArticleService: TopArticleService) { }
+  constructor(private topArticleService: TopArticleService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.topArticleService.getTopArticles()
-    .subscribe({
-      next: ((data: TopArticleType[]) => {
-        this.topArticles = data;
-      })
-    })
-  }
+      .subscribe({
+        next: ((data: TopArticleType[]) => {
+          this.topArticles = data;
+        }),
+        error: ((error: any) => {
+          console.error('An error occurred:', error);
+        })
+      });
+   }
+   
 
 }
