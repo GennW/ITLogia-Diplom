@@ -16,3 +16,8 @@ npm install cyrillic-to-translit-js
 41:45 Модуль №13. УРОК №3 карусель верстка
 51:35 Модуль №13. УРОК №3 запрос на товары
 
+
+для скролла добавить anchorScrolling
+  imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled'})],
+
+
