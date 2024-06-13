@@ -14,6 +14,7 @@ import { CarouselModule } from 'ngx-owl-carousel-o';
 import { ArticleCardComponent } from './shared/components/article-card/article-card.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PopupComponent } from './shared/components/popup/popup.component'; 
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { PopupComponent } from './shared/components/popup/popup.component';
     MatTooltipModule,
     BrowserAnimationsModule,
     CarouselModule,
+    FormsModule,
 
 
     AppRoutingModule,

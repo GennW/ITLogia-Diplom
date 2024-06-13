@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { OwlOptions } from 'ngx-owl-carousel-o';
+import { PopupComponent } from 'src/app/shared/components/popup/popup.component';
 import { TopArticleService } from 'src/app/shared/services/top-article.service';
 import { TopArticleType } from 'src/types/top-articles.type';
 
@@ -10,6 +11,8 @@ import { TopArticleType } from 'src/types/top-articles.type';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
+  isOrder: boolean = false;
+
   customOptions: OwlOptions = {
     loop: true,
     mouseDrag: false,
@@ -50,6 +53,7 @@ export class MainComponent implements OnInit {
   }
 
   topArticles: TopArticleType[] = [];
+  
 
   constructor(private topArticleService: TopArticleService, private dialog: MatDialog) { }
 
@@ -65,5 +69,19 @@ export class MainComponent implements OnInit {
       });
    }
    
+   openPopupOrder(orderTitle: string, placeholder: string): void {
+    this.isOrder = true;
+    const dialogRef = this.dialog.open(PopupComponent, {
+      data: {
+        orderTitle: orderTitle,
+        placeholder: placeholder
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The popup was closed');
+    });
+  }
+
+
 
 }

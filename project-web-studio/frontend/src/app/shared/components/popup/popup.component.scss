@@ -1,0 +1,49 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+.popup {
+  width: 727px;
+  height: 489px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  &.hide {
+    display: none;
+  }
+  .popup-close {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  .popup-title {
+    @include head-lora-38;
+    margin-bottom: 20px;
+  }
+  .popup-inputs {
+    display: grid;
+    gap: 5px;
+    .popup-input {
+        width: 422px;
+        height: 53px;
+    }
+  }
+  .popup-text {
+    font-size: 14px;
+    color: #1E1A2B;
+  }
+
+  .popup-btn {
+    margin-top: 20px;
+    width: 422px;
+    height: 53px;
+
+    &.ok {
+      width: 73px;
+      height: 36px;
+      margin-top: 40px;
+    }
+  }
+}

@@ -1,15 +1,21 @@
 <div class="popup popup-order">
-    <div class="popup-close">
+    <div class="popup-close" (click)="closeDialog()">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <line x1="1.93562" y1="2.6499" x2="13.9564" y2="14.6707" stroke="#BEBEBE" stroke-linecap="round"/>
             <line x1="13.9236" y1="2.62971" x2="1.90277" y2="14.6505" stroke="#BEBEBE" stroke-linecap="round"/>
         </svg>
     </div>
-    <div class="popup-title">Закажите бесплатную консультацию!</div>
-    <div class="popup-inputs">
-        <input class="popup-input" type="text" placeholder="Ваше имя">
-        <input class="popup-input" type="text" placeholder="Ваш номер телефона">
+    <div class="popup-title">{{orderTitle}}</div>
+    <div class="popup-inputs" *ngIf="showInputs">
+        <input class="popup-input" type="text" [placeholder]="placeholder" disabled>
+        <input class="popup-input" [(ngModel)]="name" type="text" placeholder="Ваше имя" required>
+        <input class="popup-input" [(ngModel)]="phone" type="tel" placeholder="Ваш номер телефона" required>
     </div>
-    <button class="btn popup-btn">Заказать консультацию</button>
+    <div class="popup-text" *ngIf="!isOrder">Мы свяжемся с вами при первой же возможности.</div>
+    <button class="btn popup-btn ok" *ngIf="!isOrder" (click)="closeDialog()">Окей</button>
+    <button class="btn popup-btn" [disabled]="!areFieldsFilled()"
+        *ngIf="isOrder" (click)="openPopupThanks('Спасибо за вашу заявку!')">
+        Оставить заявку
+    </button>
 
 </div>
