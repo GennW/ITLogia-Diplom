@@ -1,0 +1,110 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+.blog {
+  margin-top: 80px;
+  margin-bottom: 60px;
+  .container {
+    .blog-title {
+      @include head-lora-38;
+      margin-bottom: 40px;
+    }
+    .blog-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .blog-applied-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 40px;
+        .blog-applied-filter {
+          display: flex;
+          justify-content: space-between;
+          align-items: baseline;
+          box-sizing: border-box;
+          padding: 8px 20px;
+          width: 128px;
+          height: 37px;
+          border: 2px solid #709fdc;
+          border-radius: 5px;
+
+          span {
+            color: $blue-text-color;
+            margin-right: 8px;
+          }
+
+          a {
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
+      }
+      .blog-filter {
+        width: 257px;
+        box-sizing: border-box;
+        position: relative;
+
+        .blog-filter-head {
+          display: flex;
+          align-items: flex-start;
+          justify-content: end;
+          padding: 12px 0 12px 23px;
+          span {
+            margin-right: 65px;
+          }
+          a {
+            text-decoration: none;
+            cursor: pointer;
+          }
+        }
+        .blog-filter-body {
+          position: absolute;
+          width: 100%;
+          z-index: 1;
+          display: none;
+          padding: 12px 23px;
+          box-sizing: border-box;
+          border: 1.5px solid #b9d5fd;
+          border-radius: 0px 0px 5px 5px;
+          color: #bebebe;
+
+          // height: 235px;
+          .blog-filter-item {
+            cursor: pointer;
+            display: flex;
+            margin-bottom: 25px;
+            justify-content: space-between;
+            align-items: center;
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+
+            &.active {
+              color: #071739;
+            }
+            .blog-filter-item-title {
+            }
+            span {
+            }
+          }
+        }
+        &.open {
+          .blog-filter-head {
+            background: #b9d5fd;
+            border-radius: 5px 5px 0px 0px;
+            padding-right: 20px;
+            justify-content: space-between;
+          }
+
+          .blog-filter-body {
+            display: block;
+          }
+        }
+      }
+    }
+  }
+}

@@ -15,9 +15,17 @@ npm install cyrillic-to-translit-js
 21:50 Модуль №13. УРОК №3 карточка компонент
 41:45 Модуль №13. УРОК №3 карусель верстка
 51:35 Модуль №13. УРОК №3 запрос на товары
+55:20 Модуль №13. УРОК №4 сортировка
+1:05:20 Модуль №13. УРОК №4 получение с бекенда статей
 
 
 для скролла добавить anchorScrolling
   imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled'})],
 
+если есть файлы удаленные в гите и не отслеживаемые то git add -u
 
+
+
+
+Каталог: часть 1 
+1:26

@@ -7,7 +7,7 @@
     </div>
     <div class="popup-title">{{orderTitle}}</div>
     <div class="popup-inputs" *ngIf="showInputs">
-        <input class="popup-input" type="text" [placeholder]="placeholder" disabled>
+        <input class="popup-input" *ngIf="!isCallMeBack" type="text" [placeholder]="placeholder" disabled>
         <input class="popup-input" [(ngModel)]="name" type="text" placeholder="Ваше имя" required>
         <input class="popup-input" [(ngModel)]="phone" type="tel" placeholder="Ваш номер телефона" required>
     </div>
@@ -15,7 +15,7 @@
     <button class="btn popup-btn ok" *ngIf="!isOrder" (click)="closeDialog()">Окей</button>
     <button class="btn popup-btn" [disabled]="!areFieldsFilled()"
         *ngIf="isOrder" (click)="openPopupThanks('Спасибо за вашу заявку!')">
-        Оставить заявку
+        {{data.buttonText}}
     </button>
 
 </div>

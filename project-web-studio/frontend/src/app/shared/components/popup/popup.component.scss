@@ -21,6 +21,8 @@
   .popup-title {
     @include head-lora-38;
     margin-bottom: 20px;
+    width: 406px;
+    text-align: center;
   }
   .popup-inputs {
     display: grid;

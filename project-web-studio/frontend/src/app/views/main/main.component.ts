@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { PopupComponent } from 'src/app/shared/components/popup/popup.component';
-import { TopArticleService } from 'src/app/shared/services/top-article.service';
+import { ArticleService } from 'src/app/shared/services/article.service';
 import { TopArticleType } from 'src/types/top-articles.type';
 
 @Component({
@@ -12,6 +12,8 @@ import { TopArticleType } from 'src/types/top-articles.type';
 })
 export class MainComponent implements OnInit {
   isOrder: boolean = false;
+  isCallMeBack: boolean = false;
+
 
   customOptions: OwlOptions = {
     loop: true,
@@ -55,10 +57,10 @@ export class MainComponent implements OnInit {
   topArticles: TopArticleType[] = [];
   
 
-  constructor(private topArticleService: TopArticleService, private dialog: MatDialog) { }
+  constructor(private articleService: ArticleService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.topArticleService.getTopArticles()
+    this.articleService.getTopArticles()
       .subscribe({
         next: ((data: TopArticleType[]) => {
           this.topArticles = data;
@@ -69,12 +71,16 @@ export class MainComponent implements OnInit {
       });
    }
    
-   openPopupOrder(orderTitle: string, placeholder: string): void {
+   openPopupOrder(orderTitle: string, placeholder: string, buttonText: string): void {
     this.isOrder = true;
+    this.isCallMeBack = false;
+
     const dialogRef = this.dialog.open(PopupComponent, {
       data: {
         orderTitle: orderTitle,
-        placeholder: placeholder
+        placeholder: placeholder,
+        isCallMeBack: this.isCallMeBack,
+        buttonText: buttonText
       }
     });
     dialogRef.afterClosed().subscribe(result => {

@@ -1,13 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { PopupDataType } from 'src/types/popup-data.interface';
 
-// Определяем интерфейс для данных, которые будут передаваться в попап
-interface PopupData {
-  orderTitle: string;
-  isOrder: boolean;
-  placeholder: string;
-  showInputs: boolean;
-}
 
 @Component({
   selector: 'popup',
@@ -19,18 +13,21 @@ export class PopupComponent implements OnInit {
   isOrder: boolean = true;
   placeholder: string = '';
   showInputs: boolean = true;
-  // areFieldsFilled: boolean = false;
+  isCallMeBack: boolean = false;
   name: string = '';
   phone: string = '';
+  buttonText: string = '';
 
   
-
   // В конструкторе компонента используем MAT_DIALOG_DATA для получения данных и MatDialogRef для возможности закрытия попапа
-  constructor(@Inject(MAT_DIALOG_DATA) public data: PopupData, 
-  public dialogRef: MatDialogRef<PopupComponent>, private dialog: MatDialog) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType, 
+  public dialogRef: MatDialogRef<PopupComponent>) {
     this.orderTitle = data.orderTitle;
     this.placeholder = data.placeholder;
+    this.isCallMeBack = data.isCallMeBack;
+    this.buttonText = data.buttonText;
    }
+   
 
   ngOnInit(): void {
   }
@@ -46,8 +43,6 @@ openPopupThanks(orderTitle: string): void {
   this.showInputs = false;
   this.isOrder = false;
   this.orderTitle = orderTitle; 
-  this.showInputs = false;
-  
 }
 
  // проверка на заполненность полей

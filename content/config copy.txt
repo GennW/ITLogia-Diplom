@@ -1,18 +1,3 @@
-
-запуск sudo systemctl start mongod
-Убедитесь, что MongoDB успешно запустился
-sudo systemctl status mongod
-
-перенос данных в новую БД
-migrate-mongo up
+в blog.component next: (data: TopArticleType[] | any) привести 
+к типу ArticleResponseType вместо any
  
- если ошибка
-npm install cyrillic-to-translit-js
-
-
-1:10:55 Модуль №13. УРОК №2 регистрация
-1:02:20 Модуль №13. УРОК №3 карусель 
-21:50 Модуль №13. УРОК №3 карточка компонент
-41:45 Модуль №13. УРОК №3 карусель верстка
-51:35 Модуль №13. УРОК №3 запрос на товары
-
