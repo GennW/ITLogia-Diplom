@@ -20,6 +20,6 @@ import { AppModule } from 'src/app/app.module';
     FormsModule,
     ArticleRoutingModule
   ],
-  exports: [BlogComponent, BlogComponent, DetailComponent]
+  exports: [BlogComponent, DetailComponent, ArticleCardComponent]
 })
 export class ArticleModule { }

@@ -11,11 +11,10 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { CarouselModule } from 'ngx-owl-carousel-o';
-import { ArticleCardComponent } from './shared/components/article-card/article-card.component';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PopupComponent } from './shared/components/popup/popup.component'; 
-import { FormsModule } from '@angular/forms';
 import { ArticleModule } from './views/article/article.module';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -36,9 +35,8 @@ import { ArticleModule } from './views/article/article.module';
     CarouselModule,
     ArticleModule,
     AppRoutingModule,
-    
+    FormsModule
   ],
-  // exports: [ArticleCardComponent],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
   ],
