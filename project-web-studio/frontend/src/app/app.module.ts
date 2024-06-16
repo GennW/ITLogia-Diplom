@@ -15,6 +15,7 @@ import { ArticleCardComponent } from './shared/components/article-card/article-c
 import {MatDialogModule} from '@angular/material/dialog';
 import { PopupComponent } from './shared/components/popup/popup.component'; 
 import { FormsModule } from '@angular/forms';
+import { ArticleModule } from './views/article/article.module';
 
 @NgModule({
   declarations: [
@@ -34,12 +35,11 @@ import { FormsModule } from '@angular/forms';
     MatTooltipModule,
     BrowserAnimationsModule,
     CarouselModule,
-    FormsModule,
-
 
     AppRoutingModule,
     
   ],
+  exports: [ArticleCardComponent],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
   ],
