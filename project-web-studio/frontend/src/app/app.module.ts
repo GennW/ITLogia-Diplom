@@ -24,7 +24,6 @@ import { ArticleModule } from './views/article/article.module';
     HeaderComponent,
     FooterComponent,
     MainComponent,
-    ArticleCardComponent,
     PopupComponent
   ],
   imports: [
@@ -35,11 +34,11 @@ import { ArticleModule } from './views/article/article.module';
     MatTooltipModule,
     BrowserAnimationsModule,
     CarouselModule,
-
+    ArticleModule,
     AppRoutingModule,
     
   ],
-  exports: [ArticleCardComponent],
+  // exports: [ArticleCardComponent],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}
   ],

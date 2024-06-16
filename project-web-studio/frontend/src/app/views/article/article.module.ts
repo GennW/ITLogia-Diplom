@@ -13,12 +13,13 @@ import { AppModule } from 'src/app/app.module';
   declarations: [
     BlogComponent,
     DetailComponent,
+    ArticleCardComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
     ArticleRoutingModule
-  ], 
-  // exports: [BlogComponent]
+  ],
+  exports: [BlogComponent, BlogComponent, DetailComponent]
 })
 export class ArticleModule { }
