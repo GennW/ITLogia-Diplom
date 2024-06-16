@@ -15,6 +15,7 @@ export class ArticleService {
   getTopArticles(): Observable<TopArticleType[]> {
     return this.http.get<TopArticleType[]>(environment.api + 'articles/top')
   }
+
   getCategotiesArticles(): Observable<CategoryArticleType[]> {
     return this.http.get<CategoryArticleType[]>(environment.api + 'categories')
   }
@@ -30,4 +31,5 @@ export class ArticleService {
 
     return this.http.get<TopArticleType[]>(url);
   }
+  
 }
