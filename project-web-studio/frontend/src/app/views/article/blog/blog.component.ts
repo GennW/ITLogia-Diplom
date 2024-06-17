@@ -26,15 +26,25 @@ export class BlogComponent implements OnInit {
   }
 
   loadArticles(): void {
-    this.articleService.getArticles(1, ['dizain']).subscribe({
+    this.articleService.getArticles().subscribe({
       next: (data: TopArticleType[] | any) => {
-        this.articles = data;
+        this.articles = data.items;
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
       },
     });
   }
+  // loadArticles(): void {
+  //   this.articleService.getArticles(1, ['dizain']).subscribe({
+  //     next: (data: TopArticleType[] | any) => {
+  //       this.articles = data;
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Произошла ошибка:', error);
+  //     },
+  //   });
+  // }
 
   loadCategories(): void {
     this.articleService.getCategoriesArticles().subscribe({
@@ -68,18 +78,18 @@ export class BlogComponent implements OnInit {
   //     },
   //   });
   // }
-  filterByCategory(category: string, index: number) {
-    this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
-    this.articleService.getArticles(1, [category]).subscribe({
-      next: (data: any) => {
-        this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
-        this.categoryFilterStatus[category] = true;
-        console.log('Статьи с выбранной категорией:', this.articles);
-      },
-      error: (error: any) => {
-        console.error('Произошла ошибка:', error);
-      },
-    });
-  }
+  // filterByCategory(category: string, index: number) {
+  //   this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
+  //   this.articleService.getArticles(1, [category]).subscribe({
+  //     next: (data: any) => {
+  //       this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
+  //       this.categoryFilterStatus[category] = true;
+  //       console.log('Статьи с выбранной категорией:', this.articles);
+  //     },
+  //     error: (error: any) => {
+  //       console.error('Произошла ошибка:', error);
+  //     },
+  //   });
+  // }
   
 }

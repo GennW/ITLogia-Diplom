@@ -106,5 +106,10 @@
         }
       }
     }
+    .blog-articles {
+      display: flex;
+      gap: 40px 24px;
+      flex-wrap: wrap;
+    }
   }
 }
