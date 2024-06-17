@@ -34,8 +34,10 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     CarouselModule,
     ArticleModule,
+    FormsModule,
+
     AppRoutingModule,
-    FormsModule
+    
   ],
   providers: [
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}}

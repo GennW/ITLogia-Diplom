@@ -17,7 +17,6 @@ import { AppModule } from 'src/app/app.module';
   ],
   imports: [
     CommonModule,
-    FormsModule,
     ArticleRoutingModule
   ],
   exports: [BlogComponent, DetailComponent, ArticleCardComponent]
