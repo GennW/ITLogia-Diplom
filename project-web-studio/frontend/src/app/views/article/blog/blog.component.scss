@@ -4,11 +4,13 @@
 .blog {
   margin-top: 80px;
   margin-bottom: 60px;
+
   .container {
     .blog-title {
       @include head-lora-38;
       margin-bottom: 40px;
     }
+
     .blog-head {
       display: flex;
       justify-content: space-between;
@@ -20,6 +22,7 @@
         align-items: center;
         gap: 10px;
         margin-bottom: 40px;
+
         .blog-applied-filter {
           display: flex;
           justify-content: space-between;
@@ -42,6 +45,7 @@
           }
         }
       }
+
       .blog-filter {
         width: 257px;
         box-sizing: border-box;
@@ -52,14 +56,17 @@
           align-items: flex-start;
           justify-content: end;
           padding: 12px 0 12px 23px;
+
           span {
             margin-right: 65px;
           }
+
           a {
             text-decoration: none;
             cursor: pointer;
           }
         }
+
         .blog-filter-body {
           position: absolute;
           width: 100%;
@@ -86,12 +93,13 @@
             &.active {
               color: #071739;
             }
-            .blog-filter-item-title {
-            }
-            span {
-            }
+
+            .blog-filter-item-title {}
+
+            span {}
           }
         }
+
         &.open {
           .blog-filter-head {
             background: #b9d5fd;
@@ -106,10 +114,63 @@
         }
       }
     }
+
     .blog-articles {
       display: flex;
       gap: 40px 24px;
       flex-wrap: wrap;
     }
+
+    .paginations {
+      margin-top: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .pagination-arrow {
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.disabled {
+          opacity: 0.5;
+        }
+      }
+
+      .pagination-pages {
+        margin-left: 50px;
+        margin-right: 50px;
+        display: flex;
+        align-items: center;
+
+        .pagination-page {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-decoration: none;
+          width: 32px;
+          height: 46px;
+          font-size: 20px;
+          cursor: pointer;
+          margin-right: 20px;
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          &.active {
+            color: #B9D5FD;
+          }
+        }
+
+
+      }
+
+
+
+      .pagination-next {}
+    }
+
   }
 }
