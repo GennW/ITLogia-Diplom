@@ -9,6 +9,8 @@ import { TopArticleType } from 'src/types/top-articles.type';
 })
 export class ArticleCardComponent implements OnInit {
   @Input() topArticle!: TopArticleType;
+  @Input() articles!: TopArticleType;
+
   serverStaticPath = environment.serverStaticPath;
 
   constructor() { }

@@ -7,3 +7,13 @@
     </div>
     <div class="article-card-link"><a>Читать дальше</a></div>
 </div>
+
+<div class="article-card" *ngIf="articles">
+    <div class="article-card-specialization">{{articles.category}}</div>
+    <div class="article-card-img" style="background-image: url({{serverStaticPath + articles.image}});"></div>
+    <div class="article-card-title">{{articles.title}}</div>
+    <div class="article-card-text">
+        {{articles.description}}
+    </div>
+    <div class="article-card-link"><a>Читать дальше</a></div>
+</div>

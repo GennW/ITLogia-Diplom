@@ -1,3 +1,5 @@
+
+
 <section class="blog">
     <div class="container">
         <div class="blog-title">Блог</div>
@@ -39,7 +41,7 @@
             </div>
         </div>
         <div class="blog-articles">
-            <article-card></article-card>
+            <article-card *ngFor="let article of articles" [topArticle]="article"></article-card>
         </div>
     </div>
 </section>

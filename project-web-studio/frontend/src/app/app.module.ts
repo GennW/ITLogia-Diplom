@@ -13,8 +13,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PopupComponent } from './shared/components/popup/popup.component'; 
-import { ArticleModule } from './views/article/article.module';
 import { FormsModule } from '@angular/forms';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -33,8 +33,8 @@ import { FormsModule } from '@angular/forms';
     MatTooltipModule,
     BrowserAnimationsModule,
     CarouselModule,
-    ArticleModule,
     FormsModule,
+    SharedModule,
 
     AppRoutingModule,
     

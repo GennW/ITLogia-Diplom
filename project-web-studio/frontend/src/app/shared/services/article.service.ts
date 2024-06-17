@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
+import { DefaultResponseType } from 'src/types/default-response';
 import { TopArticleType } from 'src/types/top-articles.type';
 
 @Injectable({
@@ -16,8 +17,8 @@ export class ArticleService {
     return this.http.get<TopArticleType[]>(environment.api + 'articles/top')
   }
 
-  getCategotiesArticles(): Observable<CategoryArticleType[]> {
-    return this.http.get<CategoryArticleType[]>(environment.api + 'categories')
+  getCategoriesArticles(): Observable<CategoryArticleType[] | DefaultResponseType> {
+    return this.http.get<CategoryArticleType[] | DefaultResponseType>(environment.api + 'categories')
   }
 
   getArticles(page: number, categories: string[] = []): Observable<TopArticleType[]> {
