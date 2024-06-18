@@ -29,5 +29,5 @@ npm install cyrillic-to-translit-js
 
 
 
-Каталог: часть 1 
-1:26
+Каталог: часть 2
+56:22
