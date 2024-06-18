@@ -19,7 +19,7 @@ npm install cyrillic-to-translit-js
 1:05:20 Модуль №13. УРОК №4 получение с бекенда статей
 49:15 Модуль №13. УРОК №4 пагинация
 1:14:30 Модуль №13. УРОК №4 фильтры 
-
+31:40 Модуль №13. УРОК №5 отображение выбранных фильтров
 
 для скролла добавить anchorScrolling
   imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled'})],
