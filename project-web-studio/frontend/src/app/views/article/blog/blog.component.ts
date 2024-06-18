@@ -26,7 +26,7 @@ export class BlogComponent implements OnInit {
   }
 
   loadArticles(): void {
-    this.articleService.getArticles().subscribe({
+    this.articleService.getArticle().subscribe({
       next: (data: TopArticleType[] | any) => {
         this.articles = data.items;
       },
@@ -35,7 +35,7 @@ export class BlogComponent implements OnInit {
       },
     });
   }
-  // loadArticles(): void {
+  // loadArticlesCategory(): void {
   //   this.articleService.getArticles(1, ['dizain']).subscribe({
   //     next: (data: TopArticleType[] | any) => {
   //       this.articles = data;
@@ -78,18 +78,19 @@ export class BlogComponent implements OnInit {
   //     },
   //   });
   // }
-  // filterByCategory(category: string, index: number) {
-  //   this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
-  //   this.articleService.getArticles(1, [category]).subscribe({
-  //     next: (data: any) => {
-  //       this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
-  //       this.categoryFilterStatus[category] = true;
-  //       console.log('Статьи с выбранной категорией:', this.articles);
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Произошла ошибка:', error);
-  //     },
-  //   });
-  // }
+
+  filterByCategory(category: string, index: number) {
+    this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
+    this.articleService.getArticles(1, [category]).subscribe({
+      next: (data: any) => {
+        this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
+        this.categoryFilterStatus[category] = true;
+        console.log('Статьи с выбранной категорией:', this.articles);
+      },
+      error: (error: any) => {
+        console.error('Произошла ошибка:', error);
+      },
+    });
+  }
   
 }

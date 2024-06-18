@@ -21,18 +21,19 @@ export class ArticleService {
     return this.http.get<CategoryArticleType[] | DefaultResponseType>(environment.api + 'categories')
   }
 
-  // getArticles(page: number, categories: string[] = []): Observable<TopArticleType[]> {
-  //   // Формируем параметры запроса для категорий
-  //   const params = new HttpParams()
-  //   .set('page', page.toString())
-  //   .set('categories', categories.join(','));
+  getArticles(page: number, categories: string[] = []): Observable<TopArticleType[]> {
+    // Формируем параметры запроса для категорий
+    const params = new HttpParams()
+    .set('page', page.toString())
+    .set('categories', categories.join(','));
 
-  //   // Добавляем параметры запроса к URL
-  //   const url = `${environment.api}articles?${params}`;
+    // Добавляем параметры запроса к URL
+    const url = `${environment.api}articles?${params}`;
 
-  //   return this.http.get<TopArticleType[]>(url);
-  // }
-  getArticles(): Observable<{count: number, pages: number, items: TopArticleType[]}> {
+    return this.http.get<TopArticleType[]>(url);
+  }
+  
+  getArticle(): Observable<{count: number, pages: number, items: TopArticleType[]}> {
     return this.http.get<{count: number, pages: number, items: TopArticleType[]}>(environment.api + 'articles')
   }
 }
