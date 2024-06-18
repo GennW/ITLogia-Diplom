@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -22,10 +22,11 @@ export class ArticleService {
   }
 
   getArticles(page: number, categories: string[] = []): Observable<TopArticleType[]> {
-    // Формируем параметры запроса для категорий
-    const params = new HttpParams()
-    .set('page', page.toString())
-    .set('categories', categories.join(','));
+
+    let params = `page=${page}`;
+    categories.forEach(category => {
+      params += `&categories=${category}`;
+    })
 
     // Добавляем параметры запроса к URL
     const url = `${environment.api}articles?${params}`;

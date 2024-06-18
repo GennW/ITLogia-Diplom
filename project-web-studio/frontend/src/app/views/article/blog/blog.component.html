@@ -16,7 +16,7 @@
                     </a>
                 </div>
             </div>
-            <div class="blog-filter open">
+            <div class="blog-filter" [class.open]="filterOpen" (click)="toggleFilter()">
 
                 <div class="blog-filter-head">
                     <span>Фильтр</span>

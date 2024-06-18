@@ -13,14 +13,16 @@ import { TopArticleType } from 'src/types/top-articles.type';
 
 export class BlogComponent implements OnInit {
   articles: TopArticleType[] = [];
-  // typesOfArticles: CategoryArticleType[] | DefaultResponseType = [];
   typesOfArticles: CategoryArticleType[] = [];
   //объект, который будет содержать ключи типа string и значения типа boolean
   categoryFilterStatus: { [key: string]: boolean } = {};
+  categories: string[] = [];
+  filterOpen = false;
 
   constructor(private articleService: ArticleService) { }
 
   ngOnInit(): void {
+    
     this.loadArticles();
     this.loadCategories();
   }
@@ -35,16 +37,7 @@ export class BlogComponent implements OnInit {
       },
     });
   }
-  // loadArticlesCategory(): void {
-  //   this.articleService.getArticles(1, ['dizain']).subscribe({
-  //     next: (data: TopArticleType[] | any) => {
-  //       this.articles = data;
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Произошла ошибка:', error);
-  //     },
-  //   });
-  // }
+  
 
   loadCategories(): void {
     this.articleService.getCategoriesArticles().subscribe({
@@ -55,8 +48,8 @@ export class BlogComponent implements OnInit {
         } else {
           const resultData = data as CategoryArticleType[];
           this.typesOfArticles = resultData.map(item => ({ ...item, isExpanded: false })); 
-          console.log('CategoryArticleType', resultData);
           this.typesOfArticles = resultData;
+          console.log('CategoryArticleType', resultData);
         }
       },
       error: (error: any) => {
@@ -65,23 +58,21 @@ export class BlogComponent implements OnInit {
     });
   }
 
-  // filterByCategory(category: string, index: number) {
-  //   this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
-  //   this.articleService.getArticles(1, [category]).subscribe({
-  //     next: (data: TopArticleType[] | any) => {
-  //       this.articles = data;
-  //       this.categoryFilterStatus[category] = true;
-  //       console.log('Статьи с выбранной категорией:', this.articles);
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Произошла ошибка:', error);
-  //     },
-  //   });
-  // }
 
   filterByCategory(category: string, index: number) {
-    this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded; 
-    this.articleService.getArticles(1, [category]).subscribe({
+    this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
+    // Проверяем, существует ли категория в списке categories
+    const categoryIndex = this.categories.indexOf(category);
+  if (categoryIndex > -1) {
+    // Если категория найдена, удаляем её из массива
+    this.categories.splice(categoryIndex, 1);
+  } else {
+    // Иначе добавляем категорию в массив
+    this.categories.push(category);
+  }
+    
+    
+    this.articleService.getArticles(1, this.categories).subscribe({
       next: (data: any) => {
         this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
         this.categoryFilterStatus[category] = true;
@@ -91,6 +82,10 @@ export class BlogComponent implements OnInit {
         console.error('Произошла ошибка:', error);
       },
     });
+  }
+
+  toggleFilter() {
+    this.filterOpen = !this.filterOpen;
   }
   
 }
