@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { OwlOptions } from 'ngx-owl-carousel-o';
 import { PopupComponent } from 'src/app/shared/components/popup/popup.component';
 import { ArticleService } from 'src/app/shared/services/article.service';
-import { TopArticleType } from 'src/types/top-articles.type';
+import { ArticleType } from 'src/types/top-articles.type';
 
 @Component({
   selector: 'app-main',
@@ -54,7 +54,7 @@ export class MainComponent implements OnInit {
     nav: false
   }
 
-  topArticles: TopArticleType[] = [];
+  topArticles: ArticleType[] = [];
   
 
   constructor(private articleService: ArticleService, private dialog: MatDialog) { }
@@ -62,7 +62,7 @@ export class MainComponent implements OnInit {
   ngOnInit(): void {
     this.articleService.getTopArticles()
       .subscribe({
-        next: ((data: TopArticleType[]) => {
+        next: ((data: ArticleType[]) => {
           this.topArticles = data;
         }),
         error: ((error: any) => {

@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { TopArticleType } from 'src/types/top-articles.type';
+import { ArticleType } from 'src/types/top-articles.type';
+import { ArticleService } from '../../services/article.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'article-card',
@@ -8,12 +10,12 @@ import { TopArticleType } from 'src/types/top-articles.type';
   styleUrls: ['./article-card.component.scss']
 })
 export class ArticleCardComponent implements OnInit, AfterViewInit {
-  @Input() topArticle!: TopArticleType;
-  @Input() articles!: TopArticleType;
+  @Input() topArticle!: ArticleType;
+  @Input() articles!: ArticleType;
 
   serverStaticPath = environment.serverStaticPath;
 
-  constructor() { }
+  constructor(private articleService: ArticleService, private router: Router) { }
 
   ngOnInit(): void {
   }
@@ -30,5 +32,12 @@ export class ArticleCardComponent implements OnInit, AfterViewInit {
     }
   }
 
+  onCardClick(article: any) {
+    this.articleService.getArticleDetail(article.url)
+      .subscribe(data => {
+        console.log(data)
+        this.router.navigate(['/detail', article.url]);
+      });
+  }
 
 }

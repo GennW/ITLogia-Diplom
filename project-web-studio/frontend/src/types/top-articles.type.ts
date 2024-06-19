@@ -1,4 +1,7 @@
-export type TopArticleType = {
+export type ArticleType = {
+  text: string;
+  comments: string[];
+  commentsCount: number;
   id: string;
   title: string;
   description: string;

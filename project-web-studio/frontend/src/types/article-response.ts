@@ -1,7 +1,7 @@
-import { TopArticleType } from "./top-articles.type";
+import { ArticleType } from "./top-articles.type";
 
 export type ArticleResponseType = {
     count: number,
     pages: number,
-    items: TopArticleType[];
+    items: ArticleType[];
   }

@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
 import { DefaultResponseType } from 'src/types/default-response';
-import { TopArticleType } from 'src/types/top-articles.type';
+import { ArticleType } from 'src/types/top-articles.type';
 
 @Component({
   selector: 'app-blog',
@@ -13,7 +13,7 @@ import { TopArticleType } from 'src/types/top-articles.type';
 
 
 export class BlogComponent implements OnInit {
-  articles: TopArticleType[] = [];
+  articles: ArticleType[] = [];
   typesOfArticles: CategoryArticleType[] = [];
   //объект, который будет содержать ключи типа string и значения типа boolean
   categoryFilterStatus: { [key: string]: boolean } = {};
@@ -33,7 +33,7 @@ export class BlogComponent implements OnInit {
 
   loadArticles(page: number): void {
     this.articleService.getArticles(page, this.appliedFilters).subscribe({
-      next: (data: {count: number, pages: number, items: TopArticleType[]}) => {
+      next: (data: {count: number, pages: number, items: ArticleType[]}) => {
         this.articles = data.items;
         this.pagination(data);
 
@@ -126,6 +126,15 @@ goToPage(page: number) {
   this.currentPage = page;
   // вызвать функцию для загрузки статей для текущей страницы
   this.loadArticles(this.currentPage);
+}
+
+
+onCardClick(article: ArticleType) {
+  this.articleService.getArticleDetail(article.url)
+    .subscribe(data => {
+      console.log(data)
+      this.router.navigate(['/detail', article.url]);
+    });
 }
 
 }

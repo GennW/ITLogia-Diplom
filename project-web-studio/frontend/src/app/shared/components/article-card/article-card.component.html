@@ -15,5 +15,7 @@
     <div class="article-card-text">
         {{(articles.description.length > 100) ? (articles.description | slice:0:100) + '...' : articles.description}}
     </div>
-    <div class="article-card-link"><a>Читать дальше</a></div>
+    <div class="article-card-link" >
+        <a (click)="onCardClick(articles.url)">Читать дальше</a>
+    </div>
 </div>
