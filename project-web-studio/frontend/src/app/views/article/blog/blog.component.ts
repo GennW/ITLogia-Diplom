@@ -20,18 +20,23 @@ export class BlogComponent implements OnInit {
   categories: string[] = [];
   filterOpen = false;
   appliedFilters: string[] = [];
+  pages: number[] = [];
+  currentPage: number = 1;
 
   constructor(private articleService: ArticleService, private router: Router) { }
 
   ngOnInit(): void {
 
-    this.loadArticles();
+    this.loadArticles(this.currentPage);
     this.loadCategories();
   }
 
-  loadArticles(): void {
+  loadArticles(page: number): void {
     this.articleService.getArticle().subscribe({
       next: (data: TopArticleType[] | any) => {
+
+        this.pagination(data);
+
         this.articles = data.items;
       },
       error: (error: any) => {
@@ -59,33 +64,12 @@ export class BlogComponent implements OnInit {
       },
     });
   }
-
-
-  // filterByCategory(category: string, index: number) {
-  //   this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
-  //   // Проверяем, существует ли категория в списке categories
-  //   const categoryIndex = this.categories.indexOf(category);
-  // if (categoryIndex > -1) {
-  //   // Если категория найдена, удаляем её из массива
-  //   this.categories.splice(categoryIndex, 1);
-  // } else {
-  //   // Иначе добавляем категорию в массив
-  //   this.categories.push(category);
-  // }
-
-
-  //   this.articleService.getArticles(1, this.categories).subscribe({
-  //     next: (data: any) => {
-  //       this.articles = data.items; // Сохраняем отфильтрованные статьи в массив articles
-  //       this.categoryFilterStatus[category] = true;
-  //       console.log('Статьи с выбранной категорией:', this.articles);
-  //     },
-  //     error: (error: any) => {
-  //       console.error('Произошла ошибка:', error);
-  //     },
-  //   });
-  // }
+ 
+  
   filterByCategory(category: string, index: number) {
+    // Получаем значение item.name из typesOfArticles
+    const selectedCategory = this.typesOfArticles[index].name; 
+    // console.log('selectedCategory====',selectedCategory)
     this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
 
     const categoryIndex = this.appliedFilters.indexOf(category);
@@ -99,8 +83,10 @@ export class BlogComponent implements OnInit {
 
     this.articleService.getArticles(1, this.appliedFilters).subscribe({
       next: (data: any) => {
+        this.pagination(data);
         this.articles = data.items;
         this.updateAppliedFilters();
+        
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
@@ -122,10 +108,19 @@ export class BlogComponent implements OnInit {
     this.filterOpen = !this.filterOpen;
   }
 
-  // updateFilterParam(url: string, checked: boolean) {
-  //   this.router.navigate(['/article'], {
-  //     queryParams:
-  //   });
-  // }
+// пагинация
+pagination(data: any):void {
+          
+          this.pages = [];
+          for (let i = 1; i <= data.pages; i++) {
+            this.pages.push(i);
+          }
+}
+
+goToPage(page: number) {
+  this.currentPage = page;
+  // вызвать функцию для загрузки статей для текущей страницы
+  // this.loadArticles(this.currentPage);
+}
 
 }
