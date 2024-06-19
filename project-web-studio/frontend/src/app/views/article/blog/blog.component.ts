@@ -32,12 +32,12 @@ export class BlogComponent implements OnInit {
   }
 
   loadArticles(page: number): void {
-    this.articleService.getArticle().subscribe({
-      next: (data: TopArticleType[] | any) => {
-
+    this.articleService.getArticles(page, this.appliedFilters).subscribe({
+      next: (data: {count: number, pages: number, items: TopArticleType[]}) => {
+        this.articles = data.items;
         this.pagination(data);
 
-        this.articles = data.items;
+        
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
@@ -109,18 +109,23 @@ export class BlogComponent implements OnInit {
   }
 
 // пагинация
-pagination(data: any):void {
-          
-          this.pages = [];
-          for (let i = 1; i <= data.pages; i++) {
-            this.pages.push(i);
-          }
+// Создаем метод для формирования массива страниц
+pagination(data: {count: number, pages: number}): void {
+  // Инициализируем массив страниц
+  this.pages = [];
+
+  // Заполняем массив значениями от 1 до data.pages
+  for (let i = 1; i <= data.pages; i++) {
+    this.pages.push(i);
+  }
 }
+
+
 
 goToPage(page: number) {
   this.currentPage = page;
   // вызвать функцию для загрузки статей для текущей страницы
-  // this.loadArticles(this.currentPage);
+  this.loadArticles(this.currentPage);
 }
 
 }

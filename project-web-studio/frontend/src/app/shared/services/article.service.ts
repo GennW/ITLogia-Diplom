@@ -21,7 +21,7 @@ export class ArticleService {
     return this.http.get<CategoryArticleType[] | DefaultResponseType>(environment.api + 'categories')
   }
 
-  getArticles(page: number, categories: string[] = []): Observable<TopArticleType[]> {
+  getArticles(page: number, categories: string[] = []): Observable<{count: number, pages: number, items: TopArticleType[]}> {
 
     let params = `page=${page}`;
     categories.forEach(category => {
@@ -31,7 +31,7 @@ export class ArticleService {
     // Добавляем параметры запроса к URL
     const url = `${environment.api}articles?${params}`;
 
-    return this.http.get<TopArticleType[]>(url);
+    return this.http.get<{count: number, pages: number, items: TopArticleType[]}>(url);
   }
   
   getArticle(): Observable<{count: number, pages: number, items: TopArticleType[]}> {

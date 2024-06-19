@@ -5,7 +5,7 @@
   color: #709fdc;
   display: grid;
   width: 292px;
-  height: 571px;
+  height: 571px; //увеличить?
   position: relative;
 
   .article-card-specialization {
@@ -31,6 +31,7 @@
   .article-card-text {
     font-size: 14px;
     color: #071739;
+    margin-bottom: 10px;
   }
   .article-card-link {
     margin-top: auto;
