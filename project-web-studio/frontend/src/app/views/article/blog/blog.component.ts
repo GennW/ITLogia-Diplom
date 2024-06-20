@@ -36,15 +36,8 @@ export class BlogComponent implements OnInit {
   loadArticles(page: number): void {
     this.articleService.getArticles(page, this.appliedFilters).subscribe({
       next: (data: {count: number, pages: number, items: ArticleType[]}) => {
-        this.articles = data.items.map(article => {
-          return {
-              ...article,
-              description: this.getShortenedDescription(article.description)
-          };
-      });
+        this.articles = data.items;
         this.pagination(data);
-
-        
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
@@ -52,13 +45,13 @@ export class BlogComponent implements OnInit {
     });
   }
 
-  getShortenedDescription(description: string): string {   
-    if (description && description.length > 100) {
-        return description.substring(0, 100) + '...';
-    } else {
-        return description; 
-    }
-}
+//   getShortenedDescription(description: string): string {   
+//     if (description && description.length > 100) {
+//         return description.substring(0, 100) + '...';
+//     } else {
+//         return description; 
+//     }
+// }
 
   loadCategories(): void {
     this.articleService.getCategoriesArticles().subscribe({
@@ -70,7 +63,6 @@ export class BlogComponent implements OnInit {
           const resultData = data as CategoryArticleType[];
           this.typesOfArticles = resultData.map(item => ({ ...item, isExpanded: false }));
           this.typesOfArticles = resultData;
-          console.log('CategoryArticleType', resultData);
         }
       },
       error: (error: any) => {
@@ -112,10 +104,19 @@ export class BlogComponent implements OnInit {
     this.categoryFilterStatus = {};
     this.appliedFilters.forEach((filter) => {
       this.categoryFilterStatus[filter] = true;
-      this.appliedFilters.forEach(item => console.log(item));
-      this.typesOfArticles.forEach(item => console.log(item.name));
-
     });
+  }
+
+  getFilterName(url: string): string | undefined {
+    let filterName;
+    const foundFilter = this.typesOfArticles.find(item => item.url === url);
+    if (foundFilter) {
+      filterName = foundFilter.name;
+    } else {
+      console.log('Не найдено имя фильтра')
+    }
+    
+    return filterName;
   }
 
   toggleFilter() {

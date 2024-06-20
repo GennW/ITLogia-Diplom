@@ -3,9 +3,11 @@
     <div class="article-card-img" style="background-image: url({{serverStaticPath + topArticle.image}});"></div>
     <div class="article-card-title">{{topArticle.title}}</div>
     <div class="article-card-text">
-        {{topArticle.description}}
+        {{topArticle.description | shortenDescription}}
     </div>
-    <div class="article-card-link"><a>Читать дальше</a></div>
+    <div class="article-card-link">
+        <a  (click)="onCardClick(articles.url)">Читать дальше</a>
+    </div>
 </div>
 
 <div class="article-card" *ngIf="articles">
