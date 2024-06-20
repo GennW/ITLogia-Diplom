@@ -29,12 +29,19 @@ export class BlogComponent implements OnInit {
 
     this.loadArticles(this.currentPage);
     this.loadCategories();
+    
+
   }
 
   loadArticles(page: number): void {
     this.articleService.getArticles(page, this.appliedFilters).subscribe({
       next: (data: {count: number, pages: number, items: ArticleType[]}) => {
-        this.articles = data.items;
+        this.articles = data.items.map(article => {
+          return {
+              ...article,
+              description: this.getShortenedDescription(article.description)
+          };
+      });
         this.pagination(data);
 
         
@@ -45,6 +52,13 @@ export class BlogComponent implements OnInit {
     });
   }
 
+  getShortenedDescription(description: string): string {   
+    if (description && description.length > 100) {
+        return description.substring(0, 100) + '...';
+    } else {
+        return description; 
+    }
+}
 
   loadCategories(): void {
     this.articleService.getCategoriesArticles().subscribe({
