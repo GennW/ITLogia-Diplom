@@ -2,22 +2,25 @@
     <div class="article-card-specialization">{{topArticle.category}}</div>
     <div class="article-card-img" style="background-image: url({{serverStaticPath + topArticle.image}});"></div>
     <div class="article-card-title">{{topArticle.title}}</div>
+    
     <div class="article-card-text">
         {{topArticle.description | shortenDescription}}
     </div>
+    
     <div class="article-card-link">
-        <a  (click)="onCardClick(articles.url)">Читать дальше</a>
+        <a  (click)="onCardClick(topArticle)">Читать дальше</a>
     </div>
 </div>
 
-<div class="article-card" *ngIf="articles">
+<!-- <div class="article-card" *ngIf="articles">
     <div class="article-card-specialization">{{articles.category}}</div>
     <div class="article-card-img" style="background-image: url({{serverStaticPath + articles.image}});"></div>
     <div class="article-card-title">{{articles.title}}</div>
     <div class="article-card-text">
         {{articles.description | shortenDescription}}
     </div>
+    <div>0000000000000000{{articles.url}}</div>
     <div class="article-card-link" >
         <a (click)="onCardClick(articles.url)">Читать дальше</a>
     </div>
-</div>
+</div> -->

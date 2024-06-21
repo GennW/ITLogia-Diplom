@@ -39,6 +39,6 @@ export class ArticleService {
   }
 
   getArticleDetail(url: string) {
-    return this.http.get(`${environment.api}/articles/${url}`);
+    return this.http.get(`${environment.api}articles/${url}`);
   }
 }

@@ -1,3 +1,10 @@
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+
 a:link {
   color: inherit;
   text-decoration: none; 
@@ -10,6 +17,7 @@ a:visited {
 }
 html,
 body {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   font-family: "Montserrat", sans-serif;
@@ -212,4 +220,23 @@ a.button {
 
 .mat-dialog-container {
   background: #fff;
+}
+
+// стили для детальной инфо о статье
+.detail-body-text {
+  margin-bottom: 60px;
+  h1, h3 {
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 25px;
+      color: $blue-text-color;
+      margin-bottom: 20px;
+  }
+  p {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 40px;
+    }
+  }
 }

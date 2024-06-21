@@ -1,0 +1,69 @@
+@import "../../../../assets/styles/variables";
+@import "../../../../assets/styles/mixins";
+
+
+.detail {
+    margin-top: 80px;
+    margin-bottom: 120px;
+    .container {
+        .detail-head {
+            margin-bottom: 60px;
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            
+            .detail-head-description {
+                max-width: 607px;
+                .detail-head-description-title {
+                    @include head-lora-38
+                }
+                .detail-head-description-description {
+                    font-size: 20px;
+                    line-height: 26px;
+                    color: $blue-text-color;
+                    margin-top: 40px;
+                }
+            }
+            .detail-head-img {
+                img {
+                    border-radius: 5px;
+                    width: 527px;
+                    height: 320px;
+                }
+            }
+        }
+        .detail-body {
+
+            .detail-body-text {
+                // см глобальные стили
+            }
+            .detail-social-icon {
+                margin-bottom: 60px;
+            }
+        }
+        .detail-social {
+            .detail-social-text {
+
+            }
+            .detail-social-icon {
+
+            }
+        }
+        .detail-comments {
+            .detail-comments-text {
+            }
+            .detail-comments-auth {
+
+                a {
+                    color: $blue-text-color;
+                }
+            }
+        }
+
+    }
+}
+
+
+
+
+

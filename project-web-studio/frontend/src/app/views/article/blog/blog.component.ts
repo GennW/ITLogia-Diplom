@@ -144,12 +144,12 @@ goToPage(page: number) {
 }
 
 
-onCardClick(article: ArticleType) {
-  this.articleService.getArticleDetail(article.url)
-    .subscribe(data => {
-      console.log(data)
-      this.router.navigate(['/detail', article.url]);
-    });
-}
+// onCardClick(article: ArticleType) {
+//   this.articleService.getArticleDetail(article.url)
+//     .subscribe(data => {
+//       console.log(data)
+//       // this.router.navigate(['/detail', article.url]);
+//     });
+// }
 
 }

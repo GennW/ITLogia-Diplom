@@ -23,14 +23,7 @@ export class ArticleCardComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
   }
   
-  // Обрезаем текст до n знаков и добавляем "..."
-  getShortenedDescription(description: string): string {   
-    if (description && description.length > 100) {
-      return description.substring(0, 100) + '...';
-    } else {
-      return description; 
-    }
-  }
+
 
   onCardClick(article: any) {
     this.articleService.getArticleDetail(article.url)
