@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
+import { CommentType } from 'src/types/comment.type';
 import { DefaultResponseType } from 'src/types/default-response';
 import { ArticleType } from 'src/types/top-articles.type';
 
@@ -32,6 +33,14 @@ export class ArticleService {
     const url = `${environment.api}articles?${params}`;
 
     return this.http.get<{count: number, pages: number, items: ArticleType[]}>(url);
+  }
+
+  getComments(offset: number, articleId: string): Observable<CommentType> {
+
+    let params = `offset=${offset}&article=${articleId}`;
+    const url = `${environment.api}comments?${params}`;
+
+    return this.http.get<CommentType>(url);
   }
   
   getArticle(): Observable<{count: number, pages: number, items: ArticleType[]}> {

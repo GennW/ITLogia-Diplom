@@ -224,6 +224,7 @@ a.button {
 
 // стили для детальной инфо о статье
 .detail-body-text {
+  font-size: 14px;
   margin-bottom: 60px;
   h1, h3 {
       font-weight: 500;
@@ -238,5 +239,10 @@ a.button {
     &:last-child {
       margin-bottom: 40px;
     }
+  }
+}
+.articles-content {
+  .article-card {
+      margin-bottom: 60px;
   }
 }

@@ -38,6 +38,7 @@ export class BlogComponent implements OnInit {
       next: (data: {count: number, pages: number, items: ArticleType[]}) => {
         this.articles = data.items;
         this.pagination(data);
+        
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
