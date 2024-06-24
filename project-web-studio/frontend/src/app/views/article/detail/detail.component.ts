@@ -20,7 +20,7 @@ export class DetailComponent implements OnInit {
 
   // @Input() topArticle!: ArticleType;
   response!: CommentType;
-  offsetValue = 1; // Пример значения для offset
+  offsetValue = 0; // Пример значения для offset
   visibleComments!: any;
   hideLoadMoreClass: string = '';
   isLogged: boolean = false;
@@ -135,14 +135,8 @@ export class DetailComponent implements OnInit {
   }
 
 
-  addComment(text: string, articleId: string, accessToken: string): Observable<ResponseType> {
+  addComment(text: string, articleId: string): Observable<ResponseType> {
     const url = `${environment.api}comments`;
-
-    // Устанавливаем заголовки с x-auth для авторизации
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-auth': accessToken
-    });
 
     // Создаем объект с данными комментария
     const commentData = {
@@ -151,16 +145,15 @@ export class DetailComponent implements OnInit {
     };
 
     // Отправляем POST запрос с данными комментария и заголовками
-    return this.http.post<ResponseType>(url, commentData, { headers: headers });
+    return this.http.post<ResponseType>(url, commentData);
   }
 
   submitComment() {
     const text = this.commentTextElement.nativeElement.value;
-    const accessToken = this.accessToken; //  токен аутентификации
     const articleId = this.article.id; //  идентификатор статьи
 
-    if (text && accessToken && articleId) {
-      this.articleService.addComment(text, articleId, accessToken)
+    if (text && articleId) {
+      this.articleService.addComment(text, articleId)
         .subscribe({
           next: (response: any) => {
             console.log('Комментарий успешно добавлен:', response);

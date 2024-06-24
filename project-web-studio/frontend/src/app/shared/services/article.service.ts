@@ -43,14 +43,9 @@ export class ArticleService {
     return this.http.get<CommentType>(url);
   }
 
-  addComment(text: string, articleId: string, accessToken: string): Observable<CommentType> {
+  addComment(text: string, articleId: string): Observable<CommentType> {
     const url = `${environment.api}comments`;
     
-    // Устанавливаем заголовки, включая x-auth с переданным accessToken
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'x-auth': accessToken
-    });
 
     // Создаем объект с данными для отправки
     const commentData = {
@@ -59,7 +54,7 @@ export class ArticleService {
     };
 
     // Отправляем POST запрос с данными комментария и заголовками
-    return this.http.post<CommentType>(url, commentData, { headers: headers });
+    return this.http.post<CommentType>(url, commentData);
   }
   
   getArticle(): Observable<{count: number, pages: number, items: ArticleType[]}> {
