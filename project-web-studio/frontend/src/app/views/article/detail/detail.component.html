@@ -73,6 +73,12 @@
         </div>
         <div class="detail-comments">
             <div class="detail-comments-text">Комментарии к статье</div>
+
+            <div class="detail-comments-text-additional"
+            *ngIf="response && (!response.comments || response.comments.length === 0)"
+            >Будьте первым, кто оставит свой комментарий к статье!
+            </div>
+
             <div class="detail-comments-auth" *ngIf="!isLogged">
                 Чтобы оставлять комментарии, <a routerLink="/login">войдите</a>
                 или <a routerLink="/signup">зарегистрируйтесь</a>.
@@ -144,7 +150,7 @@
                 </div>
             </div>
 
-            <div class="detail-comments-more" [ngClass]="{'hidden': hideLoadMoreClass === 'hidden'}" (click)="loadMoreComments()">
+            <div  class="detail-comments-more" *ngIf="response && response.comments && response.comments.length > 0" [ngClass]="{'hidden': hideLoadMoreClass === 'hidden'}" (click)="loadMoreComments()">
                 <a>
                     <div class="detail-comments-more-text">
                         Загрузить ещё комментарии
