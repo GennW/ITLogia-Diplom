@@ -69,4 +69,25 @@ export class ArticleService {
   getArticleDetail(url: string) {
     return this.http.get(`${environment.api}articles/${url}`);
   }
+
+
+
+reactionsComment(commentId: string, action: string): Observable<any> {
+  const url = `${environment.api}comments/${commentId}/apply-action`;
+  
+  // Создаем объект с данными для отправки
+  const actionData = {
+    action: action
+  };
+
+  // Устанавливаем заголовки
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+  });
+
+  // Отправляем POST запрос с данными действия
+  return this.http.post(url, actionData, { headers: headers });
+}
+
+    
 }

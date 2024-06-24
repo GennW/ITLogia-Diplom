@@ -81,6 +81,7 @@ export class DetailComponent implements OnInit {
   getComments(offset: number, articleId: string) {
     this.articleService.getComments(offset, articleId).subscribe({
       next: (response: CommentType) => {
+        console.log(response)
         // Обработка ответа, полученного от сервера
         this.response = {
           allCount: response.comments.length,  // Assuming allCount is the total count of comments
@@ -175,5 +176,29 @@ export class DetailComponent implements OnInit {
     }
   }
 
+
+  // Методs для отправки действия на сервер (лайк/дизлайк)
+
+  likeComment(commentId: string) {
+    this.articleService.reactionsComment(commentId, 'like').subscribe({
+      next: (response) => {
+        // Обработка успешного ответа после отправки лайка
+      },
+      error: (error) => {
+        console.error('Ошибка при отправке лайка к комментарию:', error);
+      }
+    });
+  }
+  
+  dislikeComment(commentId: string) {
+    this.articleService.reactionsComment(commentId, 'dislike').subscribe({
+      next: (response) => {
+        // Обработка успешного ответа после отправки дизлайка
+      },
+      error: (error) => {
+        console.error('Ошибка при отправке дизлайка к комментарию:', error);
+      }
+    });
+  }
   
 }

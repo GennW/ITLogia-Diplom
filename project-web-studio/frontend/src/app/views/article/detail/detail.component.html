@@ -101,7 +101,7 @@
                     </div>
                     <div class="detail-comments-body-user-comment-text">{{comment.text}}</div>
                     <div class="detail-comments-body-user-comment-reactions">
-                        <div class="detail-comments-body-user-comment-reactions-like">
+                        <div class="detail-comments-body-user-comment-reactions-like" (click)="likeComment(comment.id)">
                             <span>51</span>
                             <a>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -116,7 +116,7 @@
                                 </svg>
                             </a>
                         </div>
-                        <div class="detail-comments-body-user-comment-reactions-dislike">
+                        <div class="detail-comments-body-user-comment-reactions-dislike" (click)="dislikeComment(comment.id)">
                             <span>12</span>
                             <a>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
