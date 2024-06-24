@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -41,6 +41,25 @@ export class ArticleService {
     const url = `${environment.api}comments?${params}`;
 
     return this.http.get<CommentType>(url);
+  }
+
+  addComment(text: string, articleId: string, accessToken: string): Observable<CommentType> {
+    const url = `${environment.api}comments`;
+    
+    // Устанавливаем заголовки, включая x-auth с переданным accessToken
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-auth': accessToken
+    });
+
+    // Создаем объект с данными для отправки
+    const commentData = {
+      text: text,
+      article: articleId
+    };
+
+    // Отправляем POST запрос с данными комментария и заголовками
+    return this.http.post<CommentType>(url, commentData, { headers: headers });
   }
   
   getArticle(): Observable<{count: number, pages: number, items: ArticleType[]}> {

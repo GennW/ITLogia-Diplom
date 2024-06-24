@@ -73,10 +73,15 @@
         </div>
         <div class="detail-comments">
             <div class="detail-comments-text">Комментарии к статье</div>
-            <div class="detail-comments-auth">
+            <div class="detail-comments-auth" *ngIf="!isLogged">
                 Чтобы оставлять комментарии, <a routerLink="/login">войдите</a>
                 или <a routerLink="/signup">зарегистрируйтесь</a>.
             </div>
+            <div class="detail-comments-auth-public-comment" *ngIf="isLogged">
+                <textarea #commentTextElement class="input" cols="91" rows="12" placeholder="Напишите Ваш комментарий к статье..."></textarea>
+                <div class="detail-comments-auth-public-comment-btn btn" (click)="submitComment()">Опубликовать комментарий</div>
+            </div>
+
             <div *ngIf="response && response.comments && response.comments.length > 0">
                 <div class="detail-comments-body" *ngFor="let comment of visibleComments">
                     <div class="detail-comments-body-user-info">

@@ -1,5 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { environment } from 'src/environments/environment';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
@@ -12,20 +15,43 @@ import { ArticleType } from 'src/types/top-articles.type';
   styleUrls: ['./detail.component.scss']
 })
 export class DetailComponent implements OnInit {
+  @ViewChild('commentTextElement') commentTextElement!: ElementRef;
+
+
   // @Input() topArticle!: ArticleType;
   response!: CommentType;
   offsetValue = 1; // Пример значения для offset
   visibleComments!: any;
-  hideLoadMoreClass: string = 'hidden';
-
+  hideLoadMoreClass: string = '';
+  isLogged: boolean = false;
   article!: ArticleType;
   topArticles: ArticleType[] = [];
   serverStaticPath = environment.serverStaticPath;
+  accessToken: string | null = null;
 
 
-  constructor(private activatedRoute: ActivatedRoute, private articleService: ArticleService) { }
+  constructor(private activatedRoute: ActivatedRoute, 
+    private articleService: ArticleService, private http: HttpClient, private authService: AuthService) { 
+      // запрашиваем первоначальное состояние пользователя
+    this.isLogged = this.authService.getIsLogIn();
+    }
 
   ngOnInit(): void {
+
+    // актуальное состояние пользователя
+    this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
+      this.isLogged = isLoggedIn;
+    });
+
+    // Получаем токен доступа из AuthService
+    const tokens = this.authService.getTokens();
+    // Доступ к токену доступа
+    if (tokens) {
+      this.accessToken = tokens.accessToken;
+    } else {
+      console.error('Token not found');
+    }
+
 
     this.articleService.getTopArticles()
       .subscribe({
@@ -61,8 +87,7 @@ export class DetailComponent implements OnInit {
           comments: response.comments
         };
         this.visibleComments = response.comments.slice(0, 3);
-        console.log('response====', this.response);
-        console.log('articleId====', articleId);
+        
       },
       error: (error) => {
         // Обработка ошибки, если запрос не удался
@@ -71,23 +96,26 @@ export class DetailComponent implements OnInit {
     });
   }
 
-  // loadMoreComments() {
-  //   const currentIndex = this.visibleComments.length;
-  //   const toDisplayCount = 3; 
-  //   this.visibleComments.push(...this.response.comments.slice(currentIndex, currentIndex + toDisplayCount));
-  // }
+
   loadMoreComments() {
+    // Узнаем текущее количество отображенных комментариев
     const currentIndex = this.visibleComments.length;
+    // Количество комментариев, которые нужно показать при каждой загрузке
     const toDisplayCount = 3; 
+    // Вычисляем сколько осталось незагруженных комментариев
     const remainingComments = this.response.comments.length - currentIndex;
 
+ // Проверяем, осталось ли меньше или столько же комментариев, сколько нужно показать
     if (remainingComments <= toDisplayCount) {
+      // Если осталось меньше или столько же, добавляем все оставшиеся комментарии
         this.visibleComments.push(...this.response.comments.slice(currentIndex));
-        // Проверяем, загружены ли все комментарии
+        
         this.hideLoadMoreClass = 'hidden'; // Применяем класс, если все комментарии загружены
-        console.log('hideLoadMoreClass = hidden');
+        
         
     } else {
+      // Если осталось больше комментариев, добавляем еще несколько к уже отображенным
+      //slice(currentIndex, currentIndex + toDisplayCount): Этот метод извлекает определенное количество комментариев из массива response.comments, начиная с индекса currentIndex и заканчивая индексом currentIndex + toDisplayCount
         this.visibleComments.push(...this.response.comments.slice(currentIndex, currentIndex + toDisplayCount));
 
     }
@@ -106,4 +134,46 @@ export class DetailComponent implements OnInit {
   }
 
 
+  addComment(text: string, articleId: string, accessToken: string): Observable<ResponseType> {
+    const url = `${environment.api}comments`;
+
+    // Устанавливаем заголовки с x-auth для авторизации
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'x-auth': accessToken
+    });
+
+    // Создаем объект с данными комментария
+    const commentData = {
+      text: text,
+      article: articleId
+    };
+
+    // Отправляем POST запрос с данными комментария и заголовками
+    return this.http.post<ResponseType>(url, commentData, { headers: headers });
+  }
+
+  submitComment() {
+    const text = this.commentTextElement.nativeElement.value;
+    const accessToken = this.accessToken; //  токен аутентификации
+    const articleId = this.article.id; //  идентификатор статьи
+
+    if (text && accessToken && articleId) {
+      this.articleService.addComment(text, articleId, accessToken)
+        .subscribe({
+          next: (response: any) => {
+            console.log('Комментарий успешно добавлен:', response);
+            this.commentTextElement.nativeElement.value = ''; // Очистит текстовое поле
+            this.getComments(this.offsetValue, articleId); // Обновит комментарии, 
+          },
+          error: (error) => {
+            console.error('Ошибка при добавлении комментария:', error);
+          }
+        });
+    } else {
+      console.error('Ошибка: Не удалось получить данные из текстового поля, токена доступа или идентификатора статьи.');
+    }
+  }
+
+  
 }
