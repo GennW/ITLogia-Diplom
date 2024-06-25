@@ -6,6 +6,7 @@ import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
 import { CommentType } from 'src/types/comment.type';
 import { DefaultResponseType } from 'src/types/default-response';
 import { ArticleType } from 'src/types/top-articles.type';
+import { UserRequestType } from 'src/types/user-request.type';
 
 @Injectable({
   providedIn: 'root'
@@ -84,5 +85,11 @@ reactionsComment(commentId: string, action: string): Observable<any> {
   return this.http.post(url, actionData, { headers: headers });
 }
 
-    
+    // Метод для отправки запроса от пользователя
+  addUserRequest(userRequest: UserRequestType): Observable<DefaultResponseType> {
+    const url = `${environment.api}requests`;
+
+    // Отправляем POST запрос с данными запроса
+    return this.http.post<DefaultResponseType>(url, userRequest);
+  }
 }

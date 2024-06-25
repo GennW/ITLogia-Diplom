@@ -1,11 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
+import { ArrayUtilsService } from 'src/app/utils/array-utils.service';
+import { DateFormatService } from 'src/app/utils/date-format.service';
 import { environment } from 'src/environments/environment';
-import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
 import { CommentType } from 'src/types/comment.type';
 import { ArticleType } from 'src/types/top-articles.type';
 
@@ -31,7 +32,9 @@ export class DetailComponent implements OnInit {
 
 
   constructor(private activatedRoute: ActivatedRoute, 
-    private articleService: ArticleService, private http: HttpClient, private authService: AuthService) { 
+    private articleService: ArticleService, private http: HttpClient, 
+    private authService: AuthService, private arrayUtilsService: ArrayUtilsService,
+    public dateFormatService: DateFormatService) { 
       // запрашиваем первоначальное состояние пользователя
     this.isLogged = this.authService.getIsLogIn();
     }
@@ -51,30 +54,38 @@ export class DetailComponent implements OnInit {
     } else {
       console.error('Token not found');
     }
+    this.getArticle();
 
+  }
 
-    this.articleService.getTopArticles()
-      .subscribe({
-        next: (data: ArticleType[]) => {
-
-          this.topArticles = data.slice(0, 2); // Вывести 2 статьи
-          // this.topArticles.forEach(item => console.log(item.id))
-
-        },
-        error: (error: any) => {
-          console.error('An error occurred:', error);
-        }
-      });
-
-
+  getArticle(): void {
 
     this.activatedRoute.params.subscribe(params => {
       this.articleService.getArticleDetail(params['url'])
         .subscribe((data: any) => {
           this.article = data;
+          this.getTopArticles();
           this.getComments(this.offsetValue, this.article.id);
-        })
-    })
+        });
+    });
+  }
+
+  getTopArticles(): void {
+    this.articleService.getTopArticles()
+    .subscribe({
+      next: (data: ArticleType[]) => {
+        const filterArticles = data.filter(item => item.url !== this.article.url )
+
+        // перемешанный отфильтрованный массив статей
+        const shuffledArticles = this.arrayUtilsService.shuffle(filterArticles);
+
+        this.topArticles = shuffledArticles.slice(0, 2); // Вывести 2 статьи
+
+      },
+      error: (error: any) => {
+        console.error('An error occurred:', error);
+      }
+    });
   }
 
 
@@ -98,6 +109,7 @@ export class DetailComponent implements OnInit {
   }
 
 
+
   loadMoreComments() {
     // Узнаем текущее количество отображенных комментариев
     const currentIndex = this.visibleComments.length;
@@ -113,40 +125,12 @@ export class DetailComponent implements OnInit {
         
         this.hideLoadMoreClass = 'hidden'; // Применяем класс, если все комментарии загружены
         
-        
     } else {
       // Если осталось больше комментариев, добавляем еще несколько к уже отображенным
       //slice(currentIndex, currentIndex + toDisplayCount): Этот метод извлекает определенное количество комментариев из массива response.comments, начиная с индекса currentIndex и заканчивая индексом currentIndex + toDisplayCount
         this.visibleComments.push(...this.response.comments.slice(currentIndex, currentIndex + toDisplayCount));
-
     }
 }
-
-
-  formatDate(date: string): string {
-    const commentDate = new Date(date);
-    const day = ('0' + commentDate.getDate()).slice(-2);
-    const month = ('0' + (commentDate.getMonth() + 1)).slice(-2);
-    const year = commentDate.getFullYear();
-    const hours = ('0' + commentDate.getHours()).slice(-2);
-    const minutes = ('0' + commentDate.getMinutes()).slice(-2);
-
-    return `${day}.${month}.${year} ${hours}:${minutes}`;
-  }
-
-
-  addComment(text: string, articleId: string): Observable<ResponseType> {
-    const url = `${environment.api}comments`;
-
-    // Создаем объект с данными комментария
-    const commentData = {
-      text: text,
-      article: articleId
-    };
-
-    // Отправляем POST запрос с данными комментария и заголовками
-    return this.http.post<ResponseType>(url, commentData);
-  }
 
   submitComment() {
     const text = this.commentTextElement.nativeElement.value;

@@ -4,5 +4,6 @@ export interface PopupDataType {
     placeholder: string;
     showInputs: boolean;
     isCallMeBack: boolean;
-    buttonText: string
+    buttonText: string;
+    phone: string
   }

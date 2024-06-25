@@ -83,6 +83,7 @@ export class MainComponent implements OnInit {
         buttonText: buttonText
       }
     });
+    console.log(dialogRef)
     dialogRef.afterClosed().subscribe(result => {
       console.log('The popup was closed');
     });

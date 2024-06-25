@@ -15,7 +15,7 @@
                 <div class="articles-title">Читайте также:</div>
                 <div class="articles-content">
                     <ng-container *ngFor="let topArticle of topArticles">
-                        <article-card *ngIf="article.url !== topArticle.url" [topArticle]="topArticle"></article-card>
+                        <article-card [topArticle]="topArticle"></article-card>
                     </ng-container>
                 </div>
             </div>
@@ -96,7 +96,7 @@
                         </div>
                         <div class="detail-comments-body-user-info-name-data">
                             <div class="detail-comments-body-user-info-name">{{ comment.user.name }}</div>
-                            <div class="detail-comments-body-user-info-data">{{ formatDate(comment.date)  }}</div>
+                            <div class="detail-comments-body-user-info-data">{{ dateFormatService.formatDate(comment.date)}}</div>
                         </div>
                     </div>
                     <div class="detail-comments-body-user-comment-text">{{comment.text}}</div>

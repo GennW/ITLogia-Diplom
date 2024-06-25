@@ -26,6 +26,7 @@ export class PopupComponent implements OnInit {
     this.placeholder = data.placeholder;
     this.isCallMeBack = data.isCallMeBack;
     this.buttonText = data.buttonText;
+    this.phone = data.phone;
    }
    
 
