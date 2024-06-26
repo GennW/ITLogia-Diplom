@@ -1,6 +1,8 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupDataType } from 'src/types/popup-data.interface';
+import { ArticleService } from '../../services/article.service';
+import { DefaultResponseType } from 'src/types/default-response';
 
 
 @Component({
@@ -17,18 +19,21 @@ export class PopupComponent implements OnInit {
   name: string = '';
   phone: string = '';
   buttonText: string = '';
+  errorOccurred: boolean = false;
 
-  
+
+
   // В конструкторе компонента используем MAT_DIALOG_DATA для получения данных и MatDialogRef для возможности закрытия попапа
-  constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType, 
-  public dialogRef: MatDialogRef<PopupComponent>) {
+  constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType,
+    private articleService: ArticleService,
+    public dialogRef: MatDialogRef<PopupComponent>) {
     this.orderTitle = data.orderTitle;
     this.placeholder = data.placeholder;
     this.isCallMeBack = data.isCallMeBack;
     this.buttonText = data.buttonText;
-    this.phone = data.phone;
-   }
-   
+    // this.phone = data.phone;
+  }
+
 
   ngOnInit(): void {
   }
@@ -38,21 +43,51 @@ export class PopupComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  sendRequestOrder(): void {
+    const requestData = {
+      name: this.name,
+      phone: this.phone,
+      type: 'order',
+      service: this.placeholder
+    };
+    if (this.isCallMeBack) {
+      requestData['type'] = 'consultation';
+    } else {
+      requestData['type'] = 'order';
+    }
 
-openPopupThanks(orderTitle: string): void {
+    this.articleService.addUserRequest(requestData)
+      .subscribe({
+        next: (response: DefaultResponseType) => {
+          if (response.error) {
+            this.errorOccurred = true;
+          } else {
+            this.openPopupThanks('Спасибо за вашу заявку!');
+          }
+        },
+        error: (error) => {
+          console.error('Error sending user request:', error);
+          this.errorOccurred = true;
+        }
+      });
+  }
 
-  this.showInputs = false;
-  this.isOrder = false;
-  this.orderTitle = orderTitle; 
-}
 
- // проверка на заполненность полей
-checkFields(): void {
- 
-}
-areFieldsFilled(): boolean {
-  return this.name.trim() !== '' && this.phone.trim() !== '';
-}
+  openPopupThanks(orderTitle: string): void {
 
-  
+    this.showInputs = false;
+    this.isOrder = false;
+    this.orderTitle = orderTitle;
+    console.log(this.placeholder)
+  }
+
+  // проверка на заполненность полей
+  checkFields(): void {
+
+  }
+  areFieldsFilled(): boolean {
+    return this.name.trim() !== '' && this.phone.trim() !== '';
+  }
+
+
 }

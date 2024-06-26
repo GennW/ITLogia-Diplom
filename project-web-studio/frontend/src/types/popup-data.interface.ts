@@ -5,5 +5,5 @@ export interface PopupDataType {
     showInputs: boolean;
     isCallMeBack: boolean;
     buttonText: string;
-    phone: string
+    // phone: string
   }

@@ -12,10 +12,13 @@
         <input class="popup-input" [(ngModel)]="phone" type="tel" placeholder="Ваш номер телефона" required>
     </div>
     <div class="popup-text" *ngIf="!isOrder">Мы свяжемся с вами при первой же возможности.</div>
+
     <button class="btn popup-btn ok" *ngIf="!isOrder" (click)="closeDialog()">Окей</button>
-    <button class="btn popup-btn" [disabled]="!areFieldsFilled()"
-        *ngIf="isOrder" (click)="openPopupThanks('Спасибо за вашу заявку!')">
+    <button class="btn popup-btn" [disabled]="!areFieldsFilled()" (click)="sendRequestOrder()"
+        *ngIf="isOrder && !errorOccurred" (click)="openPopupThanks('Спасибо за вашу заявку!')">
         {{data.buttonText}}
     </button>
+    <div class="error-message" *ngIf="errorOccurred">Произошла ошибка при отправке формы, попробуйте еще раз.</div>
+
 
 </div>
