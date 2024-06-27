@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
 import { DefaultResponseType } from 'src/types/default-response';
@@ -23,11 +23,18 @@ export class BlogComponent implements OnInit {
   pages: number[] = [];
   currentPage: number = 1;
 
-  constructor(private articleService: ArticleService, private router: Router) { }
+  constructor(private articleService: ArticleService, private router: Router,
+    private activatedRoute: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
-
+    // Получаем параметр 'page' из запроса
+    this.activatedRoute.queryParams.subscribe(params => {
+      const page = params['page'] || 1; // Если параметр 'page' не указан, используем значение по умолчанию - 1
+      console.log('page=====',page)
+      
     this.loadArticles(this.currentPage);
+  });
     this.loadCategories();
     
 
@@ -46,13 +53,6 @@ export class BlogComponent implements OnInit {
     });
   }
 
-//   getShortenedDescription(description: string): string {   
-//     if (description && description.length > 100) {
-//         return description.substring(0, 100) + '...';
-//     } else {
-//         return description; 
-//     }
-// }
 
   loadCategories(): void {
     this.articleService.getCategoriesArticles().subscribe({
