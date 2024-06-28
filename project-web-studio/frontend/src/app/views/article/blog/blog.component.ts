@@ -28,17 +28,28 @@ export class BlogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // Получаем параметр 'page' из запроса
     this.activatedRoute.queryParams.subscribe(params => {
-      const page = params['page'] || 1; // Если параметр 'page' не указан, используем значение по умолчанию - 1
-      console.log('page=====',page)
-      
-    this.loadArticles(this.currentPage);
-  });
-    this.loadCategories();
-    
+        // Извлекаем параметр 'page' из запроса и преобразуем в число, устанавливаем значение по умолчанию - 1
+        this.currentPage = Number(params['page'] || 1);
+        
+        // Проверяем наличие параметра 'filters' в запросе
+        if (params['filters']) {
+            // Если 'filters' существует, разбиваем его на массив фильтров по запятым и сохраняем в appliedFilters
+            this.appliedFilters = params['filters'].split(',');
+            // Загружаем статьи с учетом текущей страницы и выбранных фильтров
+            this.loadArticles(this.currentPage);
+        } else {
+            // Если 'filters' отсутствует, загружаем статьи без учета фильтров
+            this.loadArticles(this.currentPage);
+        }
+        this.updateAppliedFilters();
+    });
 
-  }
+    // Загружаем категории статей
+    this.loadCategories();
+}
+
+
 
   loadArticles(page: number): void {
     this.articleService.getArticles(page, this.appliedFilters).subscribe({
@@ -79,6 +90,8 @@ export class BlogComponent implements OnInit {
     // console.log('selectedCategory====',selectedCategory)
     this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
 
+
+    
     const categoryIndex = this.appliedFilters.indexOf(category);
     if (categoryIndex > -1) {
       // Если категория уже выбрана, удаляем ее из списка
@@ -99,6 +112,15 @@ export class BlogComponent implements OnInit {
         console.error('Произошла ошибка:', error);
       },
     });
+
+    // Обновляем параметры запроса URL с новыми appliedFilters
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { filters: this.appliedFilters.join(',') }, // Преобразуем массив в строку с разделителем
+      queryParamsHandling: 'merge',
+  });
+  // После обновления параметров запроса, загружаем статьи с учетом выбранных фильтров
+  this.loadArticles(this.currentPage);
   }
 
   updateAppliedFilters() {
@@ -136,13 +158,34 @@ pagination(data: {count: number, pages: number}): void {
   }
 }
 
-
-
-goToPage(page: number) {
-  this.currentPage = page;
-  // вызвать функцию для загрузки статей для текущей страницы
-  this.loadArticles(this.currentPage);
+// Метод перехода на предыдущую страницу
+navigatePrevious(): void {
+  if (this.currentPage > 1) {
+    this.goToPage(this.currentPage - 1);
+  }
 }
+
+// Метод перехода на следующую страницу
+navigateNext(): void {
+  if (this.currentPage < this.pages.length) {
+    this.goToPage(this.currentPage + 1);
+  }
+}
+
+
+// Метод для перехода на определенную страницу с использованием параметров запроса
+goToPage(page: number): void {
+  //  метод navigate роутера для перехода на ту же самую страницу с обновленными параметрами запроса
+  this.router.navigate([], {
+    // Определение параметров запроса, которые нужно обновить в URL
+    queryParams: { page: page },
+    // Указание режима обработки существующих параметров запроса при добавлении новых
+    queryParamsHandling: 'merge',
+    // Указание, что навигация относительно текущего активного маршрута
+    relativeTo: this.activatedRoute
+  });
+}
+
 
 
 // onCardClick(article: ArticleType) {

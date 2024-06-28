@@ -20,7 +20,8 @@ npm install cyrillic-to-translit-js
 49:15 Модуль №13. УРОК №4 пагинация верстка 1:01:30
 1:14:30 Модуль №13. УРОК №4 фильтры 
 31:40 Модуль №13. УРОК №5 отображение выбранных фильтров
-1:01:30 Модуль №13. УРОК №4 пагинация  
+1:01:30 Модуль №13. УРОК №5 пагинация  (15 )
+35 min activeParams 
 
 для скролла добавить anchorScrolling
   imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled'})],
@@ -32,3 +33,16 @@ npm install cyrillic-to-translit-js
 
 Каталог: часть 2
 56:22
+
+
+
+Запрос на применение действия для комментария. Возможные варианты для action в body: like, dislike, violate 
+{
+  "error": false,
+  "message": "Успешное действие!"
+}
+при повторном клике на like или dislike отправляется запрос на сервер и 
+если от сервера пришло {
+  "error": true,
+  "message": "Это действие уже применено к комментарию"
+} то тогда менять 

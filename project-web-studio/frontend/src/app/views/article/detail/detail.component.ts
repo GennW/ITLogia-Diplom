@@ -155,27 +155,90 @@ export class DetailComponent implements OnInit {
 
 
   // Методs для отправки действия на сервер (лайк/дизлайк)
+  reactToComment(comment: any, reaction: 'like' | 'dislike'): void {
+    if (comment.reaction === reaction) {
+      // Если пользователь повторно кликнул на уже поставленную реакцию, снимаем ее
+      comment.reaction = null;
+    } else {
+      // Устанавливаем новую реакцию
+      comment.reaction = reaction;
+      console.log(reaction)
+    }
+  
+    // Отправляем запрос на бэкэнд для обновления реакции
+    this.articleService.reactionsComment(comment.id, reaction).subscribe({
+      next: (response) => {
+        // Успешно отправлен запрос на бэкенд, обработка ответа
+        comment.reaction = reaction;
+        if (Array.isArray(response)) {
+          console.log('Действия пользователя для комментария:', response);
+        } 
 
-  likeComment(commentId: string) {
-    this.articleService.reactionsComment(commentId, 'like').subscribe({
-      next: (response) => {
-        // Обработка успешного ответа после отправки лайка
+        // Переключение между SVG и обновление реакции
+        if (reaction === 'like') {
+            comment.reaction = 'like';
+        } else if (reaction === 'dislike') {
+            comment.reaction = 'dislike';
+        } else {
+            comment.reaction = null;
+        }
+        // Обработка успешного ответа от бэкэнда
+      console.log('Обработка успешного ответа от бэкэнда', response, comment.id, reaction)
+
       },
       error: (error) => {
-        console.error('Ошибка при отправке лайка к комментарию:', error);
+        console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
+        // В случае ошибки отменяем изменения в реакции, чтобы UI оставался согласованным
+        comment.reaction = null;
       }
     });
   }
   
-  dislikeComment(commentId: string) {
-    this.articleService.reactionsComment(commentId, 'dislike').subscribe({
-      next: (response) => {
-        // Обработка успешного ответа после отправки дизлайка
-      },
-      error: (error) => {
-        console.error('Ошибка при отправке дизлайка к комментарию:', error);
-      }
-    });
-  }
+//   likeComment(commentId: string) {
+//     this.articleService.reactionsComment(commentId, 'like').subscribe({
+//       next: (response) => {
+//         // Запрос успешно выполнен, обновляем состояние кнопок лайков и дизлайков
+//         this.updateReactionStatus(commentId, 'like');
+//       },
+//       error: (error) => {
+//         console.error('Ошибка при отправке лайка к комментарию:', error);
+//       }
+//     });
+//   }
   
+//   dislikeComment(commentId: string) {
+//     this.articleService.reactionsComment(commentId, 'dislike').subscribe({
+//       next: (response) => {
+//           // Запрос успешно выполнен, обновляем состояние кнопок лайков и дизлайков
+//           this.updateReactionStatus(commentId, 'dislike');
+//       },
+//       error: (error) => {
+//         console.error('Ошибка при отправке дизлайка к комментарию:', error);
+//       }
+//     });
+//   }
+//   updateReactionStatus(commentId: string, action: string) {
+//     const targetComment = this.response.comments.find((comment) => comment.id === commentId);
+
+//     if (targetComment) {
+//         if (action === 'like') {
+//             targetComment.reaction = targetComment.reaction === 'like' ? null : 'like'; // Устанавливаем лайк, если его не было, иначе снимаем
+//             if (targetComment.reaction === 'dislike') {
+//                 targetComment.reaction = 'like'; // Если был установлен дизлайк, меняем на лайк
+//             }
+//         } else if (action === 'dislike') {
+//             targetComment.reaction = targetComment.reaction === 'dislike' ? null : 'dislike'; // Устанавливаем дизлайк, если его не было, иначе снимаем
+//             if (targetComment.reaction === 'like') {
+//                 targetComment.reaction = 'dislike'; // Если был установлен лайк, меняем на дизлайк
+//             }
+//         }
+//     } else {
+//         console.error('Комментарий не найден');
+//     }
+// }
+
+
+
+
+
 }
