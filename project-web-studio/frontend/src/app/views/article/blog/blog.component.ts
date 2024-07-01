@@ -22,6 +22,7 @@ export class BlogComponent implements OnInit {
   appliedFilters: string[] = [];
   pages: number[] = [];
   currentPage: number = 1;
+  
 
   constructor(private articleService: ArticleService, private router: Router,
     private activatedRoute: ActivatedRoute
@@ -36,12 +37,9 @@ export class BlogComponent implements OnInit {
         if (params['filters']) {
             // Если 'filters' существует, разбиваем его на массив фильтров по запятым и сохраняем в appliedFilters
             this.appliedFilters = params['filters'].split(',');
-            // Загружаем статьи с учетом текущей страницы и выбранных фильтров
-            this.loadArticles(this.currentPage);
-        } else {
-            // Если 'filters' отсутствует, загружаем статьи без учета фильтров
-            this.loadArticles(this.currentPage);
-        }
+        } 
+        // Загружаем статьи с учетом текущей страницы и выбранных фильтров
+        this.loadArticles(this.currentPage);
         this.updateAppliedFilters();
     });
 
@@ -91,7 +89,6 @@ export class BlogComponent implements OnInit {
     this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
 
 
-    
     const categoryIndex = this.appliedFilters.indexOf(category);
     if (categoryIndex > -1) {
       // Если категория уже выбрана, удаляем ее из списка
@@ -101,17 +98,17 @@ export class BlogComponent implements OnInit {
       this.appliedFilters.push(category);
     }
 
-    this.articleService.getArticles(1, this.appliedFilters).subscribe({
-      next: (data: any) => {
-        this.pagination(data);
-        this.articles = data.items;
-        this.updateAppliedFilters();
+    // this.articleService.getArticles(1, this.appliedFilters).subscribe({
+    //   next: (data: any) => {
+    //     this.pagination(data);
+    //     this.articles = data.items;
+    //     // this.updateAppliedFilters();
         
-      },
-      error: (error: any) => {
-        console.error('Произошла ошибка:', error);
-      },
-    });
+    //   },
+    //   error: (error: any) => {
+    //     console.error('Произошла ошибка:', error);
+    //   },
+    // });
 
     // Обновляем параметры запроса URL с новыми appliedFilters
     this.router.navigate([], {
@@ -120,7 +117,7 @@ export class BlogComponent implements OnInit {
       queryParamsHandling: 'merge',
   });
   // После обновления параметров запроса, загружаем статьи с учетом выбранных фильтров
-  this.loadArticles(this.currentPage);
+  // this.loadArticles(this.currentPage);
   }
 
   updateAppliedFilters() {
@@ -186,14 +183,5 @@ goToPage(page: number): void {
   });
 }
 
-
-
-// onCardClick(article: ArticleType) {
-//   this.articleService.getArticleDetail(article.url)
-//     .subscribe(data => {
-//       console.log(data)
-//       // this.router.navigate(['/detail', article.url]);
-//     });
-// }
 
 }

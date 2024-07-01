@@ -33,6 +33,7 @@ export class HeaderComponent implements OnInit {
         next: (userData: { id: string; name: string; email: string }) => {
           // получаем имя пользователя
           this.userName = userData.name;
+          console.log('HEADER userData.id===',userData.id)
         },
         error: () => {
           this.authService.removeTokens();

@@ -6,15 +6,21 @@
         </svg>
     </div>
     <div class="popup-title">{{orderTitle}}</div>
-    <div class="popup-inputs" *ngIf="showInputs">
+    <div class="popup-inputs" *ngIf="showInputs" [formGroup]="form">
         <input class="popup-input" *ngIf="!isCallMeBack" type="text" [placeholder]="placeholder" disabled>
-        <input class="popup-input" [(ngModel)]="name" type="text" placeholder="Ваше имя" required>
-        <input class="popup-input" [(ngModel)]="phone" type="tel" placeholder="Ваш номер телефона" required>
+        <input class="popup-input" formControlName="name" type="text" 
+        placeholder="Ваше имя" required
+        [ngStyle]="{'border-color': form.get('name')?.invalid
+        && ( form.get('name')?.touched ||  form.get('name')?.dirty) ? 'red' : ''}">
+        <input class="popup-input" formControlName="phone" type="tel" 
+        placeholder="Ваш номер телефона" required
+        [ngStyle]="{'border-color': form.get('phone')?.invalid
+        && ( form.get('phone')?.touched ||  form.get('phone')?.dirty) ? 'red' : ''}">>
     </div>
     <div class="popup-text" *ngIf="!isOrder">Мы свяжемся с вами при первой же возможности.</div>
 
     <button class="btn popup-btn ok" *ngIf="!isOrder" (click)="closeDialog()">Окей</button>
-    <button class="btn popup-btn" [disabled]="!areFieldsFilled()" (click)="sendRequestOrder()"
+    <button class="btn popup-btn" [disabled]="form.invalid" (click)="sendRequestOrder()"
         *ngIf="isOrder && !errorOccurred" (click)="openPopupThanks('Спасибо за вашу заявку!')">
         {{data.buttonText}}
     </button>

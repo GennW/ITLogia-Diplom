@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PopupComponent } from './shared/components/popup/popup.component'; 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from './shared/shared.module';
 import { AuthInterceptor } from './core/auth/auth.interceptor';
 
@@ -36,7 +36,7 @@ import { AuthInterceptor } from './core/auth/auth.interceptor';
     CarouselModule,
     FormsModule,
     SharedModule,
-
+    ReactiveFormsModule,
     AppRoutingModule,
     
   ],

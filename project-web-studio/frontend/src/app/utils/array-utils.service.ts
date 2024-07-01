@@ -16,7 +16,7 @@ export class ArrayUtilsService {
       const j = Math.floor(Math.random() * (i + 1));
       [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
     }
-    console.log('алгоритм Фишера-Йетса');
+    // console.log('алгоритм Фишера-Йетса');
     return newArray;
   }
 }

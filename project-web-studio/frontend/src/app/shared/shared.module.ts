@@ -9,6 +9,7 @@ import { ShortenDescriptionPipe } from './pipes/shorten-description.pipe';
   declarations: [ArticleCardComponent, ShortenDescriptionPipe],
   imports: [
     CommonModule,
+    
   ], 
   exports: [ArticleCardComponent]
 })

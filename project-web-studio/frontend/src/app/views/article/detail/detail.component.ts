@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { ArrayUtilsService } from 'src/app/utils/array-utils.service';
@@ -29,12 +29,13 @@ export class DetailComponent implements OnInit {
   topArticles: ArticleType[] = [];
   serverStaticPath = environment.serverStaticPath;
   accessToken: string | null = null;
+  userId: string | null = null;
 
 
   constructor(private activatedRoute: ActivatedRoute, 
     private articleService: ArticleService, private http: HttpClient, 
     private authService: AuthService, private arrayUtilsService: ArrayUtilsService,
-    public dateFormatService: DateFormatService) { 
+    public dateFormatService: DateFormatService, private snackBar: MatSnackBar) { 
       // запрашиваем первоначальное состояние пользователя
     this.isLogged = this.authService.getIsLogIn();
     }
@@ -44,6 +45,9 @@ export class DetailComponent implements OnInit {
     // актуальное состояние пользователя
     this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
       this.isLogged = isLoggedIn;
+      console.log('-------------------',this.isLogged, isLoggedIn)
+
+      
     });
 
     // Получаем токен доступа из AuthService
@@ -55,6 +59,20 @@ export class DetailComponent implements OnInit {
       console.error('Token not found');
     }
     this.getArticle();
+    
+    if (this.isLogged) {
+      this.authService.getUserName().subscribe({
+        next: (userData: { id: string }) => {
+          // получаем id пользователя
+          this.userId = userData.id;
+          console.log('userId в компоненте DetailComponent:',this.userId)
+        },
+        error: () => {
+          // this.authService.removeTokens();
+          throw new Error('Ошибка userId')
+        }
+      });
+    }
 
   }
 
@@ -91,22 +109,27 @@ export class DetailComponent implements OnInit {
 
   getComments(offset: number, articleId: string) {
     this.articleService.getComments(offset, articleId).subscribe({
-      next: (response: CommentType) => {
-        console.log(response)
-        // Обработка ответа, полученного от сервера
-        this.response = {
-          allCount: response.comments.length,  // Assuming allCount is the total count of comments
-          comments: response.comments
-        };
-        this.visibleComments = response.comments.slice(0, 3);
-        
-      },
-      error: (error) => {
-        // Обработка ошибки, если запрос не удался
-        console.error('Ошибка при получении комментариев:', error);
-      }
+        next: (response: CommentType) => {
+            // Обработка ответа от сервера и обновление свойств likesCount и dislikesCount
+            this.response = {
+                allCount: response.comments.length,
+                comments: response.comments.map(comment => {
+                    // Обновляем количества лайков и дизлайков, предусматривая возможность null значений
+                    comment.likesCount = comment.likesCount || 0;
+                    comment.dislikesCount = comment.dislikesCount || 0;
+                    return comment;
+                })
+            };
+            this.visibleComments = this.response.comments.slice(0, 3); // Отображаем только первые 3 комментария
+
+        },
+        error: (error) => {
+            // Обработка ошибки при запросе комментариев
+            console.error('Ошибка при получении комментариев:', error);
+        }
     });
-  }
+}
+
 
 
 
@@ -155,44 +178,127 @@ export class DetailComponent implements OnInit {
 
 
   // Методs для отправки действия на сервер (лайк/дизлайк)
-  reactToComment(comment: any, reaction: 'like' | 'dislike'): void {
-    if (comment.reaction === reaction) {
-      // Если пользователь повторно кликнул на уже поставленную реакцию, снимаем ее
-      comment.reaction = null;
-    } else {
-      // Устанавливаем новую реакцию
-      comment.reaction = reaction;
-      console.log(reaction)
-    }
-  
-    // Отправляем запрос на бэкэнд для обновления реакции
-    this.articleService.reactionsComment(comment.id, reaction).subscribe({
-      next: (response) => {
-        // Успешно отправлен запрос на бэкенд, обработка ответа
-        comment.reaction = reaction;
-        if (Array.isArray(response)) {
-          console.log('Действия пользователя для комментария:', response);
-        } 
+//   reactToComment(comment: any, reaction: 'like' | 'dislike'): void {
+//     if (comment.reaction === reaction) {
+//         // Если реакция уже была установлена, снимаем ее
+//         comment.reaction = null;
+//         // Уменьшаем или увеличиваем counts на сервере
+//         if (reaction === 'like') {
+//             comment.likesCount--;
+//         } else if (reaction === 'dislike') {
+//             comment.dislikesCount--;
+//         }
+//     } else {
+//         // Устанавливаем новую реакцию
+//         comment.reaction = reaction;
+//         // Увеличиваем counts на сервере
+//         if (reaction === 'like') {
+//             comment.likesCount++;
+//         } else if (reaction === 'dislike') {
+//             comment.dislikesCount++;
+//         }
+//     }
 
-        // Переключение между SVG и обновление реакции
-        if (reaction === 'like') {
-            comment.reaction = 'like';
-        } else if (reaction === 'dislike') {
-            comment.reaction = 'dislike';
-        } else {
-            comment.reaction = null;
-        }
-        // Обработка успешного ответа от бэкэнда
-      console.log('Обработка успешного ответа от бэкэнда', response, comment.id, reaction)
+//     // Отправляем запрос на сервер для обновления реакции
+//     this.articleService.reactionsComment(comment.id, reaction).subscribe({
+//         next: (response) => {
+//             // Обработка успешного ответа от сервера
+//             console.log('Реакция успешно обновлена:', response);
 
-      },
-      error: (error) => {
-        console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
-        // В случае ошибки отменяем изменения в реакции, чтобы UI оставался согласованным
-        comment.reaction = null;
+//             // Если ответ содержит количество лайков и дизлайков, можно их обновить в комментарии
+//             if (response.likesCount !== undefined) {
+//                 comment.likesCount = response.likesCount;
+//             }
+//             if (response.dislikesCount !== undefined) {
+//                 comment.dislikesCount = response.dislikesCount;
+//             }
+//         },
+//         error: (error) => {
+//             console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
+//             // В случае ошибки отменяем изменения в реакции, чтобы UI оставался согласованным
+//             if (comment.reaction === reaction) {
+//                 comment.reaction = null;
+//             }
+//         }
+//     });
+// }
+
+
+reactToComment(comment: CommentType['comments'][0], reaction: 'like' | 'dislike', userId: any): void {
+  if (comment.reaction === reaction && comment.reactedBy === userId) {
+    // Если пользователь кликнул на текущую реакцию
+    // и его реакция уже учтена, отменяем реакцию
+    comment.reaction = null;
+    if (reaction === 'like') {
+      if (comment.likesCount > 0) {
+        comment.likesCount--;
       }
-    });
+    } else if (reaction === 'dislike') {
+      if (comment.dislikesCount > 0) {
+        comment.dislikesCount--;
+      }
+    }
+    comment.reactedBy = null; // Сбрасываем идентификатор пользователя, чтобы можно было кликнуть снова
+  } else {
+    // Если реакция отличается от предыдущей или это новая реакция пользователя
+    // Уменьшаем количество предыдущей реакции, если есть
+    if (comment.reaction) {
+      if (comment.reaction === 'like') {
+        comment.likesCount--;
+      } else if (comment.reaction === 'dislike') {
+        comment.dislikesCount--;
+      }
+    }
+
+    // Устанавливаем новую реакцию
+    comment.reaction = reaction;
+    // Увеличиваем соответствующее количество
+    if (reaction === 'like') {
+      comment.likesCount++;
+    } else if (reaction === 'dislike') {
+      comment.dislikesCount++;
+    }
+    comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
   }
+
+  // Отправляем запрос на обновление реакции на сервер
+  this.articleService.reactionsComment(comment.id, reaction).subscribe({
+    next: (response) => {
+        // Обработка успешного ответа от сервера
+        console.log('Реакция успешно обновлена:', response);
+        if (response.likesCount !== undefined) {
+            comment.likesCount = response.likesCount;
+        }
+        if (response.dislikesCount !== undefined) {
+            comment.dislikesCount = response.dislikesCount;
+        }
+    },
+    error: (error) => {
+        console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
+
+        // Отменяем изменения в реакции в случае ошибки
+        if (comment.reactedBy === userId) {
+            comment.reaction = null; // Сброс текущей реакции
+            if (reaction === 'like') {
+                if (comment.likesCount > 0) {
+                    comment.likesCount--;
+                }
+            } else if (reaction === 'dislike') {
+                if (comment.dislikesCount > 0) {
+                    comment.dislikesCount--;
+                }
+            }
+            comment.reactedBy = null; // Сброс идентификатора пользователя
+        }
+    }
+  });
+  if (comment.reaction === reaction) {
+    this.snackBar.open('Ваш голос учтен');
+  }
+}
+
+
+
   
 //   likeComment(commentId: string) {
 //     this.articleService.reactionsComment(commentId, 'like').subscribe({

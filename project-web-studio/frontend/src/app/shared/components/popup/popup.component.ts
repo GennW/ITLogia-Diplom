@@ -3,6 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PopupDataType } from 'src/types/popup-data.interface';
 import { ArticleService } from '../../services/article.service';
 import { DefaultResponseType } from 'src/types/default-response';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 
 @Component({
@@ -16,22 +17,25 @@ export class PopupComponent implements OnInit {
   placeholder: string = '';
   showInputs: boolean = true;
   isCallMeBack: boolean = false;
-  name: string = '';
-  phone: string = '';
+
   buttonText: string = '';
   errorOccurred: boolean = false;
+  form: FormGroup = this.fb.group({
+    name: ['', [Validators.required]],
+    phone: ['', [Validators.required]],
+  })
 
 
 
   // В конструкторе компонента используем MAT_DIALOG_DATA для получения данных и MatDialogRef для возможности закрытия попапа
   constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType,
     private articleService: ArticleService,
-    public dialogRef: MatDialogRef<PopupComponent>) {
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<PopupComponent>) {
     this.orderTitle = data.orderTitle;
     this.placeholder = data.placeholder;
     this.isCallMeBack = data.isCallMeBack;
     this.buttonText = data.buttonText;
-    // this.phone = data.phone;
   }
 
 
@@ -45,8 +49,8 @@ export class PopupComponent implements OnInit {
 
   sendRequestOrder(): void {
     const requestData = {
-      name: this.name,
-      phone: this.phone,
+      name: this.form.get('name')?.value,
+      phone: this.form.get('phone')?.value,
       type: 'order',
       service: this.placeholder
     };
@@ -78,16 +82,15 @@ export class PopupComponent implements OnInit {
     this.showInputs = false;
     this.isOrder = false;
     this.orderTitle = orderTitle;
-    console.log(this.placeholder)
   }
 
-  // проверка на заполненность полей
-  checkFields(): void {
+  // // проверка на заполненность полей
+  // checkFields(): void {
 
-  }
-  areFieldsFilled(): boolean {
-    return this.name.trim() !== '' && this.phone.trim() !== '';
-  }
+  // }
+  // areFieldsFilled(): boolean {
+  //   return this.name.trim() !== '' && this.phone.trim() !== '';
+  // }
 
 
 }
