@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
+import { LoaderService } from 'src/app/shared/services/loader.service';
 import { ArrayUtilsService } from 'src/app/utils/array-utils.service';
 import { DateFormatService } from 'src/app/utils/date-format.service';
 import { environment } from 'src/environments/environment';
@@ -42,6 +43,7 @@ export class DetailComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    
 
     // актуальное состояние пользователя
     this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
@@ -74,7 +76,7 @@ export class DetailComponent implements OnInit {
         }
       });
     }
-
+    
   }
 
   getArticle(): void {

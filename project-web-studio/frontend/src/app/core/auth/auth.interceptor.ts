@@ -5,16 +5,18 @@ import { Router } from "@angular/router";
 import { AuthService } from "./auth.service";
 import { DefaultResponseType } from "src/types/default-response";
 import { LoginResponseType } from "src/types/login-response";
+import { LoaderService } from "src/app/shared/services/loader.service";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
 
-    constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthService, 
+        private router: Router, private loaderService: LoaderService) {}
 
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
         // лоадер
-        // this.loaderService.showLoader();
+        this.loaderService.show();
 
         const tokens = this.authService.getTokens();
         if (tokens && tokens.accessToken) {
@@ -31,13 +33,13 @@ export class AuthInterceptor implements HttpInterceptor {
                     return throwError(() => error);
                 }),
                 // скрываем лоадер
-                // finalize(() => this.loaderService.hideLoader())
+                finalize(() => this.loaderService.hide())
             );
         }
 
         return next.handle(req)
         .pipe(
-            // finalize(() => this.loaderService.hideLoader())
+            finalize(() => this.loaderService.hide())
         );
     }
 
