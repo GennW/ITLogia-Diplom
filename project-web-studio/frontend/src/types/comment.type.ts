@@ -10,7 +10,7 @@ export type CommentType = {
           id: string;
           name: string;
       };
-      reaction: 'like' | 'dislike' | null; // Добавляем свойство reaction для хранения реакции пользователя
+      reaction: 'like' | 'dislike' | 'violate' | null; // Добавляем свойство reaction для хранения реакции пользователя
       reactedBy: string | null; // Добавляем новое свойство для идентификации пользователя, который реагировал на комментарий
   }[];
 }

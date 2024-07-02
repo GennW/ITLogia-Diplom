@@ -16,6 +16,7 @@ import { PopupComponent } from './shared/components/popup/popup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from './shared/shared.module';
 import { AuthInterceptor } from './core/auth/auth.interceptor';
+import { PrivacyPolicyComponent } from './legal-documents/privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { AuthInterceptor } from './core/auth/auth.interceptor';
     HeaderComponent,
     FooterComponent,
     MainComponent,
-    PopupComponent
+    PopupComponent,
+    PrivacyPolicyComponent
   ],
   imports: [
     BrowserModule,

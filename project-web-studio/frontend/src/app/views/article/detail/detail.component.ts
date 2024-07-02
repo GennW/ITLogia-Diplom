@@ -8,6 +8,7 @@ import { ArrayUtilsService } from 'src/app/utils/array-utils.service';
 import { DateFormatService } from 'src/app/utils/date-format.service';
 import { environment } from 'src/environments/environment';
 import { CommentType } from 'src/types/comment.type';
+import { DefaultResponseType } from 'src/types/default-response';
 import { ArticleType } from 'src/types/top-articles.type';
 
 @Component({
@@ -177,174 +178,93 @@ export class DetailComponent implements OnInit {
   }
 
 
-  // Методs для отправки действия на сервер (лайк/дизлайк)
-//   reactToComment(comment: any, reaction: 'like' | 'dislike'): void {
-//     if (comment.reaction === reaction) {
-//         // Если реакция уже была установлена, снимаем ее
-//         comment.reaction = null;
-//         // Уменьшаем или увеличиваем counts на сервере
-//         if (reaction === 'like') {
-//             comment.likesCount--;
-//         } else if (reaction === 'dislike') {
-//             comment.dislikesCount--;
-//         }
-//     } else {
-//         // Устанавливаем новую реакцию
-//         comment.reaction = reaction;
-//         // Увеличиваем counts на сервере
-//         if (reaction === 'like') {
-//             comment.likesCount++;
-//         } else if (reaction === 'dislike') {
-//             comment.dislikesCount++;
-//         }
-//     }
-
-//     // Отправляем запрос на сервер для обновления реакции
-//     this.articleService.reactionsComment(comment.id, reaction).subscribe({
-//         next: (response) => {
-//             // Обработка успешного ответа от сервера
-//             console.log('Реакция успешно обновлена:', response);
-
-//             // Если ответ содержит количество лайков и дизлайков, можно их обновить в комментарии
-//             if (response.likesCount !== undefined) {
-//                 comment.likesCount = response.likesCount;
-//             }
-//             if (response.dislikesCount !== undefined) {
-//                 comment.dislikesCount = response.dislikesCount;
-//             }
-//         },
-//         error: (error) => {
-//             console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
-//             // В случае ошибки отменяем изменения в реакции, чтобы UI оставался согласованным
-//             if (comment.reaction === reaction) {
-//                 comment.reaction = null;
-//             }
-//         }
-//     });
-// }
-
-
-reactToComment(comment: CommentType['comments'][0], reaction: 'like' | 'dislike', userId: any): void {
-  if (comment.reaction === reaction && comment.reactedBy === userId) {
-    // Если пользователь кликнул на текущую реакцию
-    // и его реакция уже учтена, отменяем реакцию
-    comment.reaction = null;
-    if (reaction === 'like') {
-      if (comment.likesCount > 0) {
-        comment.likesCount--;
+reactToComment(comment: CommentType['comments'][0], reaction: 'like' | 'dislike' | 'violate', userId: any): void {
+  if (reaction === 'violate') {
+    this.articleService.reactionsComment(comment.id, reaction).subscribe({
+      next: (response: DefaultResponseType) => {
+        if (!response.error) {
+          this.snackBar.open('Жалоба отправлена');
+        } else {
+          this.snackBar.open('Жалоба уже отправлена');
+          
+        }
+      },
+      error: () => {
+        this.snackBar.open('Жалоба уже отправлена');
+        console.error('Жалоба уже отправлена');
       }
-    } else if (reaction === 'dislike') {
-      if (comment.dislikesCount > 0) {
-        comment.dislikesCount--;
-      }
-    }
-    comment.reactedBy = null; // Сбрасываем идентификатор пользователя, чтобы можно было кликнуть снова
+    });
   } else {
-    // Если реакция отличается от предыдущей или это новая реакция пользователя
-    // Уменьшаем количество предыдущей реакции, если есть
-    if (comment.reaction) {
-      if (comment.reaction === 'like') {
+    // Проверка, была ли выбрана такая же реакция на комментарий
+    if (comment.reaction === reaction && comment.reactedBy === userId) {
+      // Если пользователь кликнул на уже выбранную реакцию, отменяем ее
+      comment.reaction = null;
+      if (reaction === 'like' && comment.likesCount > 0) {
         comment.likesCount--;
-      } else if (comment.reaction === 'dislike') {
+      } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
         comment.dislikesCount--;
       }
+      comment.reactedBy = null; // Сбрасываем идентификатор пользователя
+      return;
+    } else {
+      // Уменьшаем количество предыдущей реакции, если есть
+      if (comment.reaction) {
+        if (comment.reaction === 'like') {
+          comment.likesCount--;
+        } else if (comment.reaction === 'dislike') {
+          comment.dislikesCount--;
+        }
+      }
+
+      // Устанавливаем новую реакцию
+      comment.reaction = reaction;
+      // Увеличиваем соответствующее количество
+      if (reaction === 'like') {
+        comment.likesCount++;
+      } else if (reaction === 'dislike') {
+        comment.dislikesCount++;
+      }
+      comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
     }
 
-    // Устанавливаем новую реакцию
-    comment.reaction = reaction;
-    // Увеличиваем соответствующее количество
-    if (reaction === 'like') {
-      comment.likesCount++;
-    } else if (reaction === 'dislike') {
-      comment.dislikesCount++;
-    }
-    comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
-  }
-
-  // Отправляем запрос на обновление реакции на сервер
-  this.articleService.reactionsComment(comment.id, reaction).subscribe({
-    next: (response) => {
+    // Отправляем запрос на обновление реакции на сервер
+    this.articleService.reactionsComment(comment.id, reaction).subscribe({
+      next: (response) => {
         // Обработка успешного ответа от сервера
         console.log('Реакция успешно обновлена:', response);
         if (response.likesCount !== undefined) {
-            comment.likesCount = response.likesCount;
+          comment.likesCount = response.likesCount;
         }
         if (response.dislikesCount !== undefined) {
-            comment.dislikesCount = response.dislikesCount;
+          comment.dislikesCount = response.dislikesCount;
         }
-    },
-    error: (error) => {
+      },
+      error: (error) => {
         console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
 
         // Отменяем изменения в реакции в случае ошибки
         if (comment.reactedBy === userId) {
-            comment.reaction = null; // Сброс текущей реакции
-            if (reaction === 'like') {
-                if (comment.likesCount > 0) {
-                    comment.likesCount--;
-                }
-            } else if (reaction === 'dislike') {
-                if (comment.dislikesCount > 0) {
-                    comment.dislikesCount--;
-                }
+          comment.reaction = null;
+          if (reaction === 'like') {
+            if (comment.likesCount > 0) {
+              comment.likesCount--;
             }
-            comment.reactedBy = null; // Сброс идентификатора пользователя
+          } else if (reaction === 'dislike') {
+            if (comment.dislikesCount > 0) {
+              comment.dislikesCount--;
+            }
+          }
+          comment.reactedBy = null;
         }
+      }
+    });
+
+    // Проверка, чтобы не уведичивать счетчик при повторном клике
+    if (comment.reaction === reaction) {
+      this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
     }
-  });
-  if (comment.reaction === reaction) {
-    this.snackBar.open('Ваш голос учтен');
   }
 }
-
-
-
-  
-//   likeComment(commentId: string) {
-//     this.articleService.reactionsComment(commentId, 'like').subscribe({
-//       next: (response) => {
-//         // Запрос успешно выполнен, обновляем состояние кнопок лайков и дизлайков
-//         this.updateReactionStatus(commentId, 'like');
-//       },
-//       error: (error) => {
-//         console.error('Ошибка при отправке лайка к комментарию:', error);
-//       }
-//     });
-//   }
-  
-//   dislikeComment(commentId: string) {
-//     this.articleService.reactionsComment(commentId, 'dislike').subscribe({
-//       next: (response) => {
-//           // Запрос успешно выполнен, обновляем состояние кнопок лайков и дизлайков
-//           this.updateReactionStatus(commentId, 'dislike');
-//       },
-//       error: (error) => {
-//         console.error('Ошибка при отправке дизлайка к комментарию:', error);
-//       }
-//     });
-//   }
-//   updateReactionStatus(commentId: string, action: string) {
-//     const targetComment = this.response.comments.find((comment) => comment.id === commentId);
-
-//     if (targetComment) {
-//         if (action === 'like') {
-//             targetComment.reaction = targetComment.reaction === 'like' ? null : 'like'; // Устанавливаем лайк, если его не было, иначе снимаем
-//             if (targetComment.reaction === 'dislike') {
-//                 targetComment.reaction = 'like'; // Если был установлен дизлайк, меняем на лайк
-//             }
-//         } else if (action === 'dislike') {
-//             targetComment.reaction = targetComment.reaction === 'dislike' ? null : 'dislike'; // Устанавливаем дизлайк, если его не было, иначе снимаем
-//             if (targetComment.reaction === 'like') {
-//                 targetComment.reaction = 'dislike'; // Если был установлен лайк, меняем на дизлайк
-//             }
-//         }
-//     } else {
-//         console.error('Комментарий не найден');
-//     }
-// }
-
-
-
 
 
 }

@@ -13,6 +13,8 @@ import { LoginResponseType } from 'src/types/login-response';
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
+  showPrivacyPolicy: boolean = false;
+  showPersonalDataConsent: boolean = false;
 
   signupForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern('^[a-zA-Zа-яА-Я\- ]+$')]],
@@ -68,6 +70,21 @@ export class SignupComponent implements OnInit {
         }
       })
     }
+}
+
+showPrivacyPolicySection() {
+  this.showPrivacyPolicy = true;
+  this.showPersonalDataConsent = false;
+  console.log('showPrivacyPolicySection');
+  this.router.navigate(['/privacy-policy']);
+}
+
+showPersonalDataConsentSection() {
+  this.showPersonalDataConsent = true;
+  this.showPrivacyPolicy = false;
+  console.log('showPersonalDataConsentSection');
+  this.router.navigate(['/privacy-policy']);
+
 }
 
 }
