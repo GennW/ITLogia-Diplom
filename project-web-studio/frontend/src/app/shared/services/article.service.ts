@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
+import { CommentActionsType } from 'src/types/comment-actions.type';
 import { CommentType } from 'src/types/comment.type';
 import { DefaultResponseType } from 'src/types/default-response';
 import { ArticleType } from 'src/types/top-articles.type';
@@ -42,6 +43,14 @@ export class ArticleService {
     const url = `${environment.api}comments?${params}`;
 
     return this.http.get<CommentType>(url);
+  }
+
+  getActions(articleId: string): Observable<CommentActionsType[]> {
+
+    // let params = `offset=${offset}&article=${articleId}`;
+    const url = `${environment.api}comments/article-comment-actions?articleId=${articleId}`;
+
+    return this.http.get<CommentActionsType[]>(url);
   }
 
   addComment(text: string, articleId: string): Observable<CommentType> {

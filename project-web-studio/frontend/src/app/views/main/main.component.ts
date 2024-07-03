@@ -62,7 +62,7 @@ private subscription: Subscription = new Subscription;
   constructor(private articleService: ArticleService, private dialog: MatDialog) { }
  
   ngOnInit(): void {
-    this.subscription?.add(this.articleService.getTopArticles()
+    this.subscription.add(this.subscription?.add(this.articleService.getTopArticles()
       .subscribe({
         next: ((data: ArticleType[]) => {
           this.topArticles = data;
@@ -70,7 +70,7 @@ private subscription: Subscription = new Subscription;
         error: ((error: any) => {
           console.error('An error occurred:', error);
         })
-      }));
+      })));
    }
    
   
@@ -92,10 +92,10 @@ private subscription: Subscription = new Subscription;
       }
     });
     console.log('dialogRefdialogRef',dialogRef)
-    dialogRef.afterClosed().subscribe(() => {
+    this.subscription.add(dialogRef.afterClosed().subscribe(() => {
 
       console.log('The popup was closed');
-    });
+    }));
   }
 
 
