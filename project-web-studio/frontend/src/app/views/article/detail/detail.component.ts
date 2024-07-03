@@ -168,7 +168,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   // }
   prepareActions(actionsRes: CommentActionsType[]): void {
     this.response.comments.forEach(comment => {
-      const actions = actionsRes.filter(action => action.comments === comment.id);
+      const actions = actionsRes.filter(action => action.comment === comment.id);
       console.log('actions for comment', comment.id, ': ', actions);
     });
   }
