@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { LoaderService } from 'src/app/shared/services/loader.service';
@@ -17,8 +18,10 @@ import { ArticleType } from 'src/types/top-articles.type';
   templateUrl: './detail.component.html',
   styleUrls: ['./detail.component.scss']
 })
-export class DetailComponent implements OnInit {
+export class DetailComponent implements OnInit, OnDestroy {
   @ViewChild('commentTextElement') commentTextElement!: ElementRef;
+    // для отписки от нескольких подписок
+    private subscription: Subscription = new Subscription();
 
 
   // @Input() topArticle!: ArticleType;
@@ -32,25 +35,23 @@ export class DetailComponent implements OnInit {
   serverStaticPath = environment.serverStaticPath;
   accessToken: string | null = null;
   userId: string | null = null;
+  isLoading: boolean = false;
 
 
   constructor(private activatedRoute: ActivatedRoute, 
     private articleService: ArticleService, private http: HttpClient, 
     private authService: AuthService, private arrayUtilsService: ArrayUtilsService,
-    public dateFormatService: DateFormatService, private snackBar: MatSnackBar) { 
+    public dateFormatService: DateFormatService, private snackBar: MatSnackBar, private loaderService:LoaderService) { 
       // запрашиваем первоначальное состояние пользователя
     this.isLogged = this.authService.getIsLogIn();
     }
 
   ngOnInit(): void {
     
-
     // актуальное состояние пользователя
     this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
       this.isLogged = isLoggedIn;
-      console.log('-------------------',this.isLogged, isLoggedIn)
-
-      
+      // console.log('-------------------',this.isLogged, isLoggedIn)
     });
 
     // Получаем токен доступа из AuthService
@@ -79,20 +80,25 @@ export class DetailComponent implements OnInit {
     
   }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    console.log('unsubscribe app-detail')
+  }
+
   getArticle(): void {
 
-    this.activatedRoute.params.subscribe(params => {
+    this.subscription.add(this.activatedRoute.params.subscribe(params => {
       this.articleService.getArticleDetail(params['url'])
         .subscribe((data: any) => {
           this.article = data;
           this.getTopArticles();
           this.getComments(this.offsetValue, this.article.id);
         });
-    });
+    }));
   }
 
   getTopArticles(): void {
-    this.articleService.getTopArticles()
+    this.subscription.add(this.articleService.getTopArticles()
     .subscribe({
       next: (data: ArticleType[]) => {
         const filterArticles = data.filter(item => item.url !== this.article.url )
@@ -106,12 +112,12 @@ export class DetailComponent implements OnInit {
       error: (error: any) => {
         console.error('An error occurred:', error);
       }
-    });
+    }));
   }
 
 
   getComments(offset: number, articleId: string) {
-    this.articleService.getComments(offset, articleId).subscribe({
+    this.subscription.add(this.articleService.getComments(offset, articleId).subscribe({
         next: (response: CommentType) => {
             // Обработка ответа от сервера и обновление свойств likesCount и dislikesCount
             this.response = {
@@ -130,13 +136,15 @@ export class DetailComponent implements OnInit {
             // Обработка ошибки при запросе комментариев
             console.error('Ошибка при получении комментариев:', error);
         }
-    });
+    }));
 }
 
 
 
 
   loadMoreComments() {
+    this.isLoading = true;
+    this.loaderService.show();
     // Узнаем текущее количество отображенных комментариев
     const currentIndex = this.visibleComments.length;
     // Количество комментариев, которые нужно показать при каждой загрузке
@@ -156,6 +164,9 @@ export class DetailComponent implements OnInit {
       //slice(currentIndex, currentIndex + toDisplayCount): Этот метод извлекает определенное количество комментариев из массива response.comments, начиная с индекса currentIndex и заканчивая индексом currentIndex + toDisplayCount
         this.visibleComments.push(...this.response.comments.slice(currentIndex, currentIndex + toDisplayCount));
     }
+
+    this.isLoading = false;
+    this.loaderService.hide();
 }
 
   submitComment() {
@@ -163,7 +174,7 @@ export class DetailComponent implements OnInit {
     const articleId = this.article.id; //  идентификатор статьи
 
     if (text && articleId) {
-      this.articleService.addComment(text, articleId)
+      this.subscription.add(this.articleService.addComment(text, articleId)
         .subscribe({
           next: (response: any) => {
             console.log('Комментарий успешно добавлен:', response);
@@ -173,7 +184,7 @@ export class DetailComponent implements OnInit {
           error: (error) => {
             console.error('Ошибка при добавлении комментария:', error);
           }
-        });
+        }));
     } else {
       console.error('Ошибка: Не удалось получить данные из текстового поля, токена доступа или идентификатора статьи.');
     }
@@ -181,90 +192,94 @@ export class DetailComponent implements OnInit {
 
 
 reactToComment(comment: CommentType['comments'][0], reaction: 'like' | 'dislike' | 'violate', userId: any): void {
-  if (reaction === 'violate') {
-    this.articleService.reactionsComment(comment.id, reaction).subscribe({
-      next: (response: DefaultResponseType) => {
-        if (!response.error) {
-          this.snackBar.open('Жалоба отправлена');
-        } else {
+  if (this.isLogged) {
+    if (reaction === 'violate') {
+      this.subscription.add(this.articleService.reactionsComment(comment.id, reaction).subscribe({
+        next: (response: DefaultResponseType) => {
+          if (!response.error) {
+            this.snackBar.open('Жалоба отправлена');
+          } else {
+            this.snackBar.open('Жалоба уже отправлена');
+            
+          }
+        },
+        error: () => {
           this.snackBar.open('Жалоба уже отправлена');
-          
+          console.error('Жалоба уже отправлена');
         }
-      },
-      error: () => {
-        this.snackBar.open('Жалоба уже отправлена');
-        console.error('Жалоба уже отправлена');
-      }
-    });
-  } else {
-    // Проверка, была ли выбрана такая же реакция на комментарий
-    if (comment.reaction === reaction && comment.reactedBy === userId) {
-      // Если пользователь кликнул на уже выбранную реакцию, отменяем ее
-      comment.reaction = null;
-      if (reaction === 'like' && comment.likesCount > 0) {
-        comment.likesCount--;
-      } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
-        comment.dislikesCount--;
-      }
-      comment.reactedBy = null; // Сбрасываем идентификатор пользователя
-      return;
+      }));
     } else {
-      // Уменьшаем количество предыдущей реакции, если есть
-      if (comment.reaction) {
-        if (comment.reaction === 'like') {
+      // Проверка, была ли выбрана такая же реакция на комментарий
+      if (comment.reaction === reaction && comment.reactedBy === userId) {
+        // Если пользователь кликнул на уже выбранную реакцию, отменяем ее
+        comment.reaction = null;
+        if (reaction === 'like' && comment.likesCount > 0) {
           comment.likesCount--;
-        } else if (comment.reaction === 'dislike') {
+        } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
           comment.dislikesCount--;
         }
-      }
-
-      // Устанавливаем новую реакцию
-      comment.reaction = reaction;
-      // Увеличиваем соответствующее количество
-      if (reaction === 'like') {
-        comment.likesCount++;
-      } else if (reaction === 'dislike') {
-        comment.dislikesCount++;
-      }
-      comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
-    }
-
-    // Отправляем запрос на обновление реакции на сервер
-    this.articleService.reactionsComment(comment.id, reaction).subscribe({
-      next: (response) => {
-        // Обработка успешного ответа от сервера
-        console.log('Реакция успешно обновлена:', response);
-        if (response.likesCount !== undefined) {
-          comment.likesCount = response.likesCount;
-        }
-        if (response.dislikesCount !== undefined) {
-          comment.dislikesCount = response.dislikesCount;
-        }
-      },
-      error: (error) => {
-        console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
-
-        // Отменяем изменения в реакции в случае ошибки
-        if (comment.reactedBy === userId) {
-          comment.reaction = null;
-          if (reaction === 'like') {
-            if (comment.likesCount > 0) {
-              comment.likesCount--;
-            }
-          } else if (reaction === 'dislike') {
-            if (comment.dislikesCount > 0) {
-              comment.dislikesCount--;
-            }
+        comment.reactedBy = null; // Сбрасываем идентификатор пользователя
+        return;
+      } else {
+        // Уменьшаем количество предыдущей реакции, если есть
+        if (comment.reaction) {
+          if (comment.reaction === 'like') {
+            comment.likesCount--;
+          } else if (comment.reaction === 'dislike') {
+            comment.dislikesCount--;
           }
-          comment.reactedBy = null;
         }
+  
+        // Устанавливаем новую реакцию
+        comment.reaction = reaction;
+        // Увеличиваем соответствующее количество
+        if (reaction === 'like') {
+          comment.likesCount++;
+        } else if (reaction === 'dislike') {
+          comment.dislikesCount++;
+        }
+        comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
       }
-    });
-
-    // Проверка, чтобы не уведичивать счетчик при повторном клике
-    if (comment.reaction === reaction) {
-      this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
+  
+      // Отправляем запрос на обновление реакции на сервер
+      this.subscription.add(this.articleService.reactionsComment(comment.id, reaction).subscribe({
+        next: (response) => {
+          // Обработка успешного ответа от сервера
+          console.log('Реакция успешно обновлена:', response);
+          if (response.likesCount !== undefined) {
+            comment.likesCount = response.likesCount;
+          }
+          if (response.dislikesCount !== undefined) {
+            comment.dislikesCount = response.dislikesCount;
+          }
+        },
+        error: (error) => {
+          console.error(`Ошибка при отправке ${reaction} к комментарию:`, error);
+  
+          // Отменяем изменения в реакции в случае ошибки
+          if (comment.reactedBy === userId) {
+            comment.reaction = null;
+            if (reaction === 'like') {
+              if (comment.likesCount > 0) {
+                comment.likesCount--;
+              }
+            } else if (reaction === 'dislike') {
+              if (comment.dislikesCount > 0) {
+                comment.dislikesCount--;
+              }
+            }
+            comment.reactedBy = null;
+          }
+        }
+      }));
+  
+      // Проверка, чтобы не уведичивать счетчик при повторном клике
+      if (comment.reaction === reaction) {
+        this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
+      }
     }
+  } else {
+    this.snackBar.open('Чтобы ставить реакции, зарегистрируйтесь');
   }
 }
 

@@ -3,7 +3,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
+import { environment } from 'src/environments/environment';
 import { DefaultResponseType } from 'src/types/default-response';
 import { LoginResponseType } from 'src/types/login-response';
 
@@ -13,8 +15,12 @@ import { LoginResponseType } from 'src/types/login-response';
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-  showPrivacyPolicy: boolean = false;
-  showPersonalDataConsent: boolean = false;
+privacyLink = `${window.location.protocol}//${window.location.hostname}`;
+personalLink = `${window.location.protocol}//${window.location.hostname}`;
+private subscription: Subscription = new Subscription;
+
+
+
 
   signupForm = this.fb.group({
     name: ['', [Validators.required, Validators.pattern('^[a-zA-Zа-яА-Я\- ]+$')]],
@@ -29,13 +35,34 @@ export class SignupComponent implements OnInit {
     }
 
   ngOnInit(): void {
+    this.initPrivacyLink();
+    this.initPersonalLink();
+  }
 
+     
+  
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe main-component');
+  }
+
+  initPrivacyLink(): void {
+    if (!environment.production) {
+      this.privacyLink += `:${window.location.port}`
+    }
+    this.privacyLink += '/privacy-policy?section=privacy';
+  }
+  initPersonalLink(): void {
+    if (!environment.production) {
+      this.personalLink += `:${window.location.port}`
+    }
+    this.personalLink += '/privacy-policy?section=personal';
   }
 
   signUp() {
     if (this.signupForm.valid && this.signupForm.value.name && this.signupForm.value.email && this.signupForm.value.password 
       && this.signupForm.value.agree) {
-      this.authService.signup(this.signupForm.value.name, this.signupForm.value.email, this.signupForm.value.password)
+      this.subscription.add(this.authService.signup(this.signupForm.value.name, this.signupForm.value.email, this.signupForm.value.password)
       .subscribe({
         next: (data: DefaultResponseType | LoginResponseType) => {
           let error = null;
@@ -68,23 +95,9 @@ export class SignupComponent implements OnInit {
 
           }
         }
-      })
+      }));
     }
 }
 
-showPrivacyPolicySection() {
-  this.showPrivacyPolicy = true;
-  this.showPersonalDataConsent = false;
-  console.log('showPrivacyPolicySection');
-  this.router.navigate(['/privacy-policy']);
-}
-
-showPersonalDataConsentSection() {
-  this.showPersonalDataConsent = true;
-  this.showPrivacyPolicy = false;
-  console.log('showPersonalDataConsentSection');
-  this.router.navigate(['/privacy-policy']);
-
-}
 
 }

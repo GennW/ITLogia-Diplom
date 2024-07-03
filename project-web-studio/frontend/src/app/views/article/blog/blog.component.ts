@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
 import { DefaultResponseType } from 'src/types/default-response';
@@ -12,7 +13,7 @@ import { ArticleType } from 'src/types/top-articles.type';
 })
 
 
-export class BlogComponent implements OnInit {
+export class BlogComponent implements OnInit, OnDestroy {
   articles: ArticleType[] = [];
   typesOfArticles: CategoryArticleType[] = [];
   //объект, который будет содержать ключи типа string и значения типа boolean
@@ -23,34 +24,39 @@ export class BlogComponent implements OnInit {
   pages: number[] = [];
   currentPage: number = 1;
   
+  // для отписки от нескольких подписок
+  private subscription: Subscription = new Subscription();
 
   constructor(private articleService: ArticleService, private router: Router,
     private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(params => {
-        // Извлекаем параметр 'page' из запроса и преобразуем в число, устанавливаем значение по умолчанию - 1
-        this.currentPage = Number(params['page'] || 1);
-        
-        // Проверяем наличие параметра 'filters' в запросе
-        if (params['filters']) {
-            // Если 'filters' существует, разбиваем его на массив фильтров по запятым и сохраняем в appliedFilters
-            this.appliedFilters = params['filters'].split(',');
-        } 
-        // Загружаем статьи с учетом текущей страницы и выбранных фильтров
-        this.loadArticles(this.currentPage);
-        this.updateAppliedFilters();
-    });
+   this.subscription.add(this.activatedRoute.queryParams.subscribe(params => {
+    // Извлекаем параметр 'page' из запроса и преобразуем в число, устанавливаем значение по умолчанию - 1
+    this.currentPage = Number(params['page'] || 1);
+    
+    // Проверяем наличие параметра 'filters' в запросе
+    if (params['filters']) {
+        // Если 'filters' существует, разбиваем его на массив фильтров по запятым и сохраняем в appliedFilters
+        this.appliedFilters = params['filters'].split(',');
+    } 
+    // Загружаем статьи с учетом текущей страницы и выбранных фильтров
+    this.loadArticles(this.currentPage);
+    this.updateAppliedFilters();
+}));
 
     // Загружаем категории статей
     this.loadCategories();
 }
 
-
+ngOnDestroy(): void {
+  this.subscription.unsubscribe();
+  console.log('unsubscribe')
+}
 
   loadArticles(page: number): void {
-    this.articleService.getArticles(page, this.appliedFilters).subscribe({
+    this.subscription.add(this.articleService.getArticles(page, this.appliedFilters).subscribe({
       next: (data: {count: number, pages: number, items: ArticleType[]}) => {
         this.articles = data.items;
         this.pagination(data);
@@ -59,12 +65,12 @@ export class BlogComponent implements OnInit {
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
       },
-    });
+    }));
   }
 
 
   loadCategories(): void {
-    this.articleService.getCategoriesArticles().subscribe({
+    this.subscription.add(this.articleService.getCategoriesArticles().subscribe({
       next: (data: CategoryArticleType[] | DefaultResponseType) => {
         const errorData = data as DefaultResponseType;
         if (errorData.error !== undefined) {
@@ -78,7 +84,7 @@ export class BlogComponent implements OnInit {
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
       },
-    });
+    }));
   }
  
   
@@ -98,26 +104,18 @@ export class BlogComponent implements OnInit {
       this.appliedFilters.push(category);
     }
 
-    // this.articleService.getArticles(1, this.appliedFilters).subscribe({
-    //   next: (data: any) => {
-    //     this.pagination(data);
-    //     this.articles = data.items;
-    //     // this.updateAppliedFilters();
-        
-    //   },
-    //   error: (error: any) => {
-    //     console.error('Произошла ошибка:', error);
-    //   },
-    // });
 
     // Обновляем параметры запроса URL с новыми appliedFilters
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: { filters: this.appliedFilters.join(',') }, // Преобразуем массив в строку с разделителем
+      queryParams: { filters: this.appliedFilters.join(','),
+      page: 1
+      }, // Преобразуем массив в строку с разделителем
       queryParamsHandling: 'merge',
   });
   // После обновления параметров запроса, загружаем статьи с учетом выбранных фильтров
   // this.loadArticles(this.currentPage);
+  this.updateAppliedFilters();
   }
 
   updateAppliedFilters() {
@@ -128,16 +126,16 @@ export class BlogComponent implements OnInit {
   }
 
   getFilterName(url: string): string | undefined {
-    let filterName;
     const foundFilter = this.typesOfArticles.find(item => item.url === url);
+  
     if (foundFilter) {
-      filterName = foundFilter.name;
+      return foundFilter.name;
     } else {
-      console.log('Не найдено имя фильтра')
+      console.log('Не найдено имя фильтра для URL: ' + url);
     }
-    
-    return filterName;
+    return undefined;
   }
+  
 
   toggleFilter() {
     this.filterOpen = !this.filterOpen;

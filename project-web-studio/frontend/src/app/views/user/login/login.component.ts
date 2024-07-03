@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { DefaultResponseType } from 'src/types/default-response';
 import { LoginResponseType } from 'src/types/login-response';
@@ -13,6 +14,7 @@ import { LoginResponseType } from 'src/types/login-response';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  private subscription: Subscription = new Subscription;
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -26,10 +28,18 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
   }
+     
+
+  
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe login-component');
+  }
+
 
   login(): void {
     if (this.loginForm.valid && this.loginForm.value.email && this.loginForm.value.password) {
-      this.authService.login(this.loginForm.value.email, this.loginForm.value.password, !!this.loginForm.value.rememberMe)
+      this.subscription.add(this.authService.login(this.loginForm.value.email, this.loginForm.value.password, !!this.loginForm.value.rememberMe)
         .subscribe({
           next: (data: LoginResponseType | DefaultResponseType) => {
             let error = null;
@@ -64,7 +74,7 @@ export class LoginComponent implements OnInit {
               this._snackBar.open('Ошибка авторизации')
             }
           }
-        })
+        }));
     }
   }
 

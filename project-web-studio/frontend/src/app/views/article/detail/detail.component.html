@@ -95,7 +95,7 @@
                             </div>
                             <div class="detail-comments-body-user-comment-text">{{comment.text}}</div>
                             <div class="detail-comments-body-user-comment-reactions">
-                                <div class="detail-comments-body-user-comment-reactions-like" >
+                                <div class="detail-comments-body-user-comment-reactions-like">
                                     <span>{{comment.likesCount}}</span>
                                     <a>
                                         <!-- не  выбран like -->
@@ -164,8 +164,8 @@
                         </div>
                     </div>
         
-                    <div  class="detail-comments-more" *ngIf="response && response.comments && response.comments.length > 0" [ngClass]="{'hidden': hideLoadMoreClass === 'hidden'}" (click)="loadMoreComments()">
-                        <a>
+                    <div  class="detail-comments-more" *ngIf="response && response.comments && response.comments.length > 0" [ngClass]="{'hidden': hideLoadMoreClass === 'hidden'}">
+                        <a *ngIf="!isLoading" (click)="loadMoreComments()">
                             <div class="detail-comments-more-text">
                                 Загрузить ещё комментарии
                             </div>
@@ -177,7 +177,9 @@
                                 </svg>
                             </div>
                         </a>
-        
+                        <div class="loader" *ngIf="isLoading">
+                            <app-loader></app-loader>
+                          </div>
                     </div>
                 </div>
             </div>

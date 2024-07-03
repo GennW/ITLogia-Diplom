@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { OwlOptions } from 'ngx-owl-carousel-o';
+import { Subscription } from 'rxjs';
 import { PopupComponent } from 'src/app/shared/components/popup/popup.component';
 import { ArticleService } from 'src/app/shared/services/article.service';
 import { ArticleType } from 'src/types/top-articles.type';
@@ -10,10 +11,11 @@ import { ArticleType } from 'src/types/top-articles.type';
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss']
 })
-export class MainComponent implements OnInit {
+export class MainComponent implements OnInit, OnDestroy {
   isOrder: boolean = false;
   isCallMeBack: boolean = false;
 
+private subscription: Subscription = new Subscription;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -58,9 +60,9 @@ export class MainComponent implements OnInit {
   
 
   constructor(private articleService: ArticleService, private dialog: MatDialog) { }
-
+ 
   ngOnInit(): void {
-    this.articleService.getTopArticles()
+    this.subscription?.add(this.articleService.getTopArticles()
       .subscribe({
         next: ((data: ArticleType[]) => {
           this.topArticles = data;
@@ -68,9 +70,15 @@ export class MainComponent implements OnInit {
         error: ((error: any) => {
           console.error('An error occurred:', error);
         })
-      });
+      }));
    }
    
+  
+   ngOnDestroy(): void {
+     this.subscription?.unsubscribe();
+     console.log('unsubscribe main-component');
+   }
+
    openPopupOrder(orderTitle: string, placeholder: string, buttonText: string): void {
     this.isOrder = true;
     this.isCallMeBack = false;

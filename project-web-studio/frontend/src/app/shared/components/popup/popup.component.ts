@@ -4,6 +4,7 @@ import { PopupDataType } from 'src/types/popup-data.interface';
 import { ArticleService } from '../../services/article.service';
 import { DefaultResponseType } from 'src/types/default-response';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -25,7 +26,7 @@ export class PopupComponent implements OnInit {
     phone: ['', [Validators.required]],
   })
 
-
+  private subscription: Subscription | null = null;
 
   // В конструкторе компонента используем MAT_DIALOG_DATA для получения данных и MatDialogRef для возможности закрытия попапа
   constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType,
@@ -41,6 +42,13 @@ export class PopupComponent implements OnInit {
 
   ngOnInit(): void {
   }
+
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe popup.component');
+  }
+
 
   // Метод для закрытия попапа
   closeDialog(): void {
@@ -60,7 +68,7 @@ export class PopupComponent implements OnInit {
       requestData['type'] = 'order';
     }
 
-    this.articleService.addUserRequest(requestData)
+    this.subscription?.add(this.articleService.addUserRequest(requestData)
       .subscribe({
         next: (response: DefaultResponseType) => {
           if (response.error) {
@@ -73,7 +81,7 @@ export class PopupComponent implements OnInit {
           console.error('Error sending user request:', error);
           this.errorOccurred = true;
         }
-      });
+      }));
   }
 
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { DefaultResponseType } from 'src/types/default-response';
 
@@ -12,7 +13,8 @@ import { DefaultResponseType } from 'src/types/default-response';
 export class HeaderComponent implements OnInit {
   isLogged: boolean = false;
   userName: string = '';
-
+  private subscription: Subscription = new Subscription();
+  
   constructor(
     private authService: AuthService,
     private _snackBar: MatSnackBar,
@@ -33,7 +35,7 @@ export class HeaderComponent implements OnInit {
         next: (userData: { id: string; name: string; email: string }) => {
           // получаем имя пользователя
           this.userName = userData.name;
-          console.log('HEADER userData.id===',userData.id)
+          console.log('HEADER userData.id===',userData.id, userData.name)
         },
         error: () => {
           this.authService.removeTokens();
@@ -42,9 +44,17 @@ export class HeaderComponent implements OnInit {
       });
     }
   }
+ 
+  
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe header-component');
+  }
+
 
   logout(): void {
-    this.authService.logout().subscribe({
+   this.subscription.add(this.authService.logout().subscribe({
       next: (data: DefaultResponseType) => {
         // если успешно вышли из системы
         this.doLogout();
@@ -52,7 +62,7 @@ export class HeaderComponent implements OnInit {
       error: () => {
         this.doLogout();
       },
-    });
+    }));
   }
 
   doLogout(): void {

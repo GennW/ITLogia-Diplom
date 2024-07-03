@@ -24,29 +24,7 @@ export class FooterComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  // sendRequestOrder(): void {
-  //   const requestData = {
-  //     // name: this.name,
-  //     phone: this.phone,
-  //     type: 'order',
-  //     // service: this.placeholder
-  //   };
   
-  //   this.articleService.addUserRequest(requestData)
-  //     .subscribe({
-  //       next: (response: DefaultResponseType) => {
-  //         if (response.error) {
-  //           this.errorOccurred = true;
-  //         } else {
-  //           this.openPopupThanks('Спасибо за вашу заявку!');
-  //         }
-  //       },
-  //       error: (error) => {
-  //         console.error('Error sending user request:', error);
-  //         this.errorOccurred = true;
-  //       }
-  //     });
-  // }
   openPopupOrder(orderTitle: string,buttonText: string): void {
     this.isCallMeBack = true;
     this.isOrder = true;
