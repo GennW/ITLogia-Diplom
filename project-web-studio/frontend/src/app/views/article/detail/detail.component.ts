@@ -43,6 +43,8 @@ export class DetailComponent implements OnInit, OnDestroy {
   userId: string | null = null;
   isLoading: boolean = false;
   isAction: boolean = false;
+  isLiked: boolean = false; // параметр для хранения информации о лайке
+  isDisliked: boolean = false; // параметр для хранения информации о дизлайке
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -177,17 +179,35 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.response.comments.forEach(comment => {
       const actions = actionsRes.filter(action => action.comment === comment.id);
       if (actions.length) {
-        comment.isAction = true
-        console.log('actions for comment', comment.id, comment.reactedBy, comment.reaction, ': ', actions);
+        actions.forEach(action => {
+            if (action.action === 'like') {
+                comment.isLikedByUser = true; // Устанавливаем, что пользователь поставил лайк
+            }
+            if (action.action === 'dislike') {
+                comment.isDislikedByUser = true; // Устанавливаем, что пользователь поставил дизлайк
+            }
+        });
+        console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
       }
-      
     });
-  }
+}
+
 
   prepareComments(commentRes: CommentType): void {
     this.response = {
       allCount: commentRes.comments.length,
       comments: commentRes.comments.map((comment) => {
+      //   // Установка параметров для отслеживания реакций пользователя
+      // if (comment.reaction === 'like') {
+      //   comment.isLikedByUser = true;
+      //   comment.isDislikedByUser = false;
+      // } else if (comment.reaction === 'dislike') {
+      //   comment.isDislikedByUser = true;
+      //   comment.isLikedByUser = false;
+      // } else {
+      //   comment.isLikedByUser = false;
+      //   comment.isDislikedByUser = false;
+      // }
         // Обновляем количества лайков и дизлайков, предусматривая возможность null значений
         comment.likesCount = comment.likesCount || 0;
         comment.dislikesCount = comment.dislikesCount || 0;
