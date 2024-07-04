@@ -48,3 +48,132 @@ npm install cyrillic-to-translit-js
   "error": true,
   "message": "Это действие уже применено к комментарию"
 } то тогда менять 
+
+
+
+
+
+Для достижения этого функционала, Вам нужно сделать следующее:
+
+В методе prepareActions(), когда Вы получаете данные о реакциях пользователя на комментарии, Вам нужно не только устанавливать флаги isLikedByUser и isDislikedByUser, но и сохранять эту информацию в самом комментарии.
+Измените этот метод следующим образом:
+
+prepareActions(actionsRes: CommentActionsType[]): void {
+  this.response.comments.forEach(comment => {
+    const actions = actionsRes.filter(action => action.comment === comment.id);
+    if (actions.length) {
+      actions.forEach(action => {
+        if (action.action === 'like') {
+          comment.isLikedByUser = true; // Устанавливаем, что пользователь поставил лайк
+          comment.reaction = 'like'; // Сохраняем реакцию в самом комментарии
+        }
+        if (action.action === 'dislike') {
+          comment.isDislikedByUser = true; // Устанавливаем, что пользователь поставил дизлайк
+          comment.reaction = 'dislike'; // Сохраняем реакцию в самом комментарии
+        }
+      });
+      console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
+    }
+  });
+}
+В методе reactToComment(), перед тем как добавлять новую реакцию, проверяйте, есть ли уже реакция у пользователя на этот комментарий. Если есть, то отменяйте ее, а не добавляйте новую.
+Измените этот метод следующим образом:
+
+reactToComment(
+  comment: CommentType['comments'][0],
+  reaction: 'like' | 'dislike' | 'violate',
+  userId: any
+): void {
+  if (this.isLogged) {
+    if (reaction === 'violate') {
+      // Код для отправки жалобы
+    } else {
+      // Проверяем, была ли выбрана такая же реакция на комментарий
+      if (comment.reaction === reaction && comment.reactedBy === userId) {
+        // Если пользователь кликнул на уже выбранную реакцию, отменяем ее
+        this.cancelReaction(comment, reaction);
+        return;
+      } else {
+        // Уменьшаем количество предыдущей реакции, если есть
+        this.decrementPreviousReaction(comment);
+
+        // Устанавливаем новую реакцию
+        this.setNewReaction(comment, reaction, userId);
+
+        // Отправляем запрос на обновление реакции на сервер
+        this.updateReactionOnServer(comment, reaction);
+      }
+
+      // Проверка, чтобы не увеличивать счетчик при повторном клике
+      if (comment.reaction === reaction) {
+        this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
+      }
+    }
+  } else {
+    this.snackBar.open('Чтобы ставить реакции, зарегистрируйтесь');
+  }
+}
+
+cancelReaction(comment: CommentType['comments'][0], reaction: 'like' | 'dislike'): void {
+  comment.reaction = null;
+  if (reaction === 'like' && comment.likesCount > 0) {
+    comment.likesCount--;
+  } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
+    comment.dislikesCount--;
+  }
+  comment.reactedBy = null; // Сбрасываем идентификатор пользователя
+}
+
+decrementPreviousReaction(comment: CommentType['comments'][0]): void {
+  if (comment.reaction) {
+    if (comment.reaction === 'like') {
+      comment.likesCount--;
+    } else if (comment.reaction === 'dislike') {
+      comment.dislikesCount--;
+    }
+  }
+}
+
+setNewReaction(
+  comment: CommentType['comments'][0],
+  reaction: 'like' | 'dislike',
+  userId: any
+): void {
+  comment.reaction = reaction;
+  if (reaction === 'like') {
+    comment.likesCount++;
+  } else if (reaction === 'dislike') {
+    comment.dislikesCount++;
+  }
+  comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
+}
+
+updateReactionOnServer(
+  comment: CommentType['comments'][0],
+  reaction: 'like' | 'dislike'
+): void {
+  this.subscription.add(
+    this.articleService.reactionsComment(comment.id, reaction).subscribe({
+      next: (response) => {
+        // Обработка успешного ответа от сервера
+        console.log('Реакция успешно обновлена:', response);
+        if (response.likesCount !== undefined) {
+          comment.likesCount = response.likesCount;
+        }
+        if (response.dislikesCount !== undefined) {
+          comment.dislikesCount = response.dislikesCount;
+        }
+      },
+      error: (error) => {
+        console.error(
+          `Ошибка при отправке ${reaction} к комментарию:`,
+          error
+        );
+
+        // Отменяем изменения в реакции в случае ошибки
+        this.cancelReaction(comment, reaction);
+      },
+    })
+  );
+}
+Теперь, когда Вы загружаете страницу, комментарии будут отображаться с правильно установленными реакциями пользователя. При повторном клике на ту же реакцию, она будет отменена, а при клике на другую реакцию, предыдущая будет отменена, и новая установлена.

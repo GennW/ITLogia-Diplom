@@ -184,10 +184,12 @@ export class DetailComponent implements OnInit, OnDestroy {
         actions.forEach(action => {
             if (action.action === 'like') {
                 comment.isLikedByUser = true; // Устанавливаем, что пользователь поставил лайк
-            }
+                comment.reaction = 'like';
+              }
             if (action.action === 'dislike') {
                 comment.isDislikedByUser = true; // Устанавливаем, что пользователь поставил дизлайк
-            }
+                comment.reaction = 'dislike';
+              }
         });
         console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
       }
