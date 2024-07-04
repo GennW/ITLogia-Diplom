@@ -22,6 +22,8 @@ npm install cyrillic-to-translit-js
 31:40 Модуль №13. УРОК №5 отображение выбранных фильтров
 1:01:30 Модуль №13. УРОК №5 пагинация  (15 )
 35 min activeParams 
+45:00 передача состояния флагов при лоадере Модуль №13. УРОК №12
+
 
 для скролла добавить anchorScrolling
   imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled', scrollPositionRestoration: 'enabled'})],

@@ -42,6 +42,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   accessToken: string | null = null;
   userId: string | null = null;
   isLoading: boolean = false;
+  isAction: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -133,11 +134,36 @@ export class DetailComponent implements OnInit, OnDestroy {
     );
   }
 
+  // getComments(offset: number, articleId: string) {
+  //   this.subscription.add(
+  //     forkJoin([
+  //       this.articleService.getComments(offset, articleId),
+  //       this.articleService.getActions(articleId),
+  //     ]).subscribe({
+  //       next: ([comments, actions]: [CommentType, CommentActionsType[]]) => {
+  //         this.prepareComments(comments);
+  //         this.prepareActions(actions);
+  //       },
+  //     })
+  //   );
+  // }
   getComments(offset: number, articleId: string) {
     this.subscription.add(
       forkJoin([
-        this.articleService.getComments(offset, articleId),
-        this.articleService.getActions(articleId),
+        this.articleService.getComments(offset, articleId).pipe(
+          catchError(error => {
+            console.error('Ошибка при получении комментариев:', error);
+            return of({ allCount: 0, comments: [] });
+            // Возвращаем пустой список комментариев в случае ошибки
+          })
+        ),
+        this.articleService.getActions(articleId).pipe(
+          catchError(error => {
+            console.error('Ошибка при получении действий комментариев:', error);
+            return of([]);
+            // Возвращаем пустой массив действий в случае ошибки
+          })
+        )
       ]).subscribe({
         next: ([comments, actions]: [CommentType, CommentActionsType[]]) => {
           this.prepareComments(comments);
@@ -146,30 +172,15 @@ export class DetailComponent implements OnInit, OnDestroy {
       })
     );
   }
-  // getComments(offset: number, articleId: string): Observable<[CommentType, CommentActionsType[]]> {
 
-  //   let commentsRequest = this.articleService.getComments(offset, articleId).pipe(
-  //     catchError(error => {
-  //       console.error('Ошибка при получении комментариев:', error);
-  //       // Возвращаем ошибку в виде нового Observable
-  //       return of({ allCount: 0, comments: [] });
-  //     })
-  //   );
-  
-  //   let actionsRequest = this.articleService.getActions(articleId).pipe(
-  //     catchError(error => {
-  //       console.error('Ошибка при получении действий комментариев:', error);
-  //       // Возвращаем ошибку в виде нового Observable
-  //       return of([]);
-  //     })
-  //   );
-  
-  //   return forkJoin([commentsRequest, actionsRequest]);
-  // }
   prepareActions(actionsRes: CommentActionsType[]): void {
     this.response.comments.forEach(comment => {
       const actions = actionsRes.filter(action => action.comment === comment.id);
-      console.log('actions for comment', comment.id, ': ', actions);
+      if (actions.length) {
+        comment.isAction = true
+        console.log('actions for comment', comment.id, comment.reactedBy, comment.reaction, ': ', actions);
+      }
+      
     });
   }
 
@@ -308,6 +319,7 @@ export class DetailComponent implements OnInit, OnDestroy {
               if (response.dislikesCount !== undefined) {
                 comment.dislikesCount = response.dislikesCount;
               }
+              // comment.isAction = true; 
             },
             error: (error) => {
               console.error(
