@@ -61,6 +61,8 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    
     // актуальное состояние пользователя
     this.subscription.add(
       this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
