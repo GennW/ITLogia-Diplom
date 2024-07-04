@@ -193,6 +193,28 @@ export class DetailComponent implements OnInit, OnDestroy {
       }
     });
 }
+// prepareActions(actionsRes: CommentActionsType[]): void {
+//   this.response.comments.forEach(comment => {
+//     const actions = actionsRes.filter(action => action.comment === comment.id);
+
+//     if (actions.length > 0) {
+//       actions.forEach(action => {
+//         if (action.action === 'like') {
+//           comment.isLikedByUser = true;
+//           comment.isDislikedByUser = false;
+//         } else if (action.action === 'dislike') {
+//           comment.isDislikedByUser = true;
+//           comment.isLikedByUser = false;
+//         }
+//       });
+
+//       if (comment.isLikedByUser && comment.isDislikedByUser) {
+//         comment.isLikedByUser = false;
+//       }
+//     }
+//   });
+// }
+
 
 
   prepareComments(commentRes: CommentType): void {
@@ -376,4 +398,82 @@ export class DetailComponent implements OnInit, OnDestroy {
       this.snackBar.open('Чтобы ставить реакции, зарегистрируйтесь');
     }
   }
+
+  // reactToComment(
+  //   comment: CommentType['comments'][0],
+  //   reaction: 'like' | 'dislike' | 'violate',
+  //   userId: any
+  // ): void {
+  //   if (this.isLogged) {
+  //     if (reaction === 'violate') {
+  //       this.subscription.add(
+  //         this.articleService.reactionsComment(comment.id, reaction).subscribe({
+  //           next: (response: DefaultResponseType) => {
+  //             if (!response.error) {
+  //               this.snackBar.open('Жалоба отправлена');
+  //             } else {
+  //               this.snackBar.open('Жалоба уже отправлена');
+  //             }
+  //           },
+  //           error: () => {
+  //             this.snackBar.open('Жалоба уже отправлена');
+  //             console.error('Жалоба уже отправлена');
+  //           },
+  //         })
+  //       );
+  //     } else {
+  //       if (reaction === 'like' && comment.isLikedByUser) {
+  //         comment.isLikedByUser = false;
+  //       } else if (reaction === 'dislike' && comment.isDislikedByUser) {
+  //         comment.isDislikedByUser = false;
+  //       } else {
+  //         if (reaction === 'like') {
+  //           if (comment.isLikedByUser) {
+  //             comment.likesCount--;
+  //           } else {
+  //             comment.likesCount++;
+  //           }
+  //           comment.isLikedByUser = !comment.isLikedByUser;
+  //         } else if (reaction === 'dislike') {
+  //           if (comment.isDislikedByUser) {
+  //             comment.dislikesCount--;
+  //           } else {
+  //             comment.dislikesCount++;
+  //           }
+  //           comment.isDislikedByUser = !comment.isDislikedByUser;
+  //         }
+
+  //         this.subscription.add(
+  //           this.articleService.reactionsComment(comment.id, reaction).subscribe({
+  //             next: (response) => {
+  //               console.log('Реакция успешно обновлена:', response);
+  //               if (response.likesCount !== undefined) {
+  //                 comment.likesCount = response.likesCount;
+  //               }
+  //               if (response.dislikesCount !== undefined) {
+  //                 comment.dislikesCount = response.dislikesCount;
+  //               }
+  //             },
+  //             error: (error) => {
+  //               console.error(
+  //                 `Ошибка при отправке ${reaction} к комментарию:`,
+  //                 error
+  //               );
+
+  //               if (reaction === 'like' && !comment.isLikedByUser) {
+  //                 comment.likesCount--;
+  //               } else if (reaction === 'dislike' && !comment.isDislikedByUser) {
+  //                 comment.dislikesCount--;
+  //               }
+  //               comment.isLikedByUser = !comment.isLikedByUser;
+  //               comment.isDislikedByUser = !comment.isDislikedByUser;
+  //             },
+  //           })
+  //         );
+  //       }
+  //     }
+  //   } else {
+  //     this.snackBar.open('Чтобы ставить реакции, зарегистрируйтесь');
+  //   }
+  // }
 }
