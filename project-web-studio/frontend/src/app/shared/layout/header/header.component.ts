@@ -30,6 +30,7 @@ export class HeaderComponent implements OnInit {
       this.isLogged = isLoggedIn;
     });
     
+    
     if (this.isLogged) {
       this.authService.getUserName().subscribe({
         next: (userData: { id: string; name: string; email: string }) => {

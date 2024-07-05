@@ -16,6 +16,7 @@ export class AuthService {
 
   public isLogged$: Subject<boolean> = new Subject<boolean>();
   private isLogged: boolean = false;
+  
 
   constructor(private http: HttpClient) {
     // проверяем залогинен или нет пользователь
