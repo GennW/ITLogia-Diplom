@@ -33,17 +33,7 @@ export class HeaderComponent implements OnInit {
     
     
     if (this.isLogged) {
-      this.authService.getUserName().subscribe({
-        next: (userData: { id: string; name: string; email: string }) => {
-          // получаем имя пользователя
-          this.userName = userData.name;
-          console.log('HEADER userData.id===',userData.id, userData.name)
-        },
-        error: () => {
-          this.authService.removeTokens();
-          throw new Error('Ошибка с токенами')
-        }
-      });
+      this.updateUserName();
     }
   }
  
@@ -54,6 +44,20 @@ export class HeaderComponent implements OnInit {
     console.log('unsubscribe header-component');
   }
 
+  updateUserName(): void {
+    this.subscription.add(
+      this.authService.getUserName().subscribe({
+        next: (userData: { id: string; name: string; email: string }) => {
+          this.userName = userData.name;
+          console.log('HEADER userData.id===', userData.id, userData.name);
+        },
+        error: () => {
+          this.authService.removeTokens();
+          throw new Error('Ошибка с токенами');
+        }
+      })
+    );
+  }
 
   logout(): void {
    this.subscription.add(this.authService.logout().subscribe({
