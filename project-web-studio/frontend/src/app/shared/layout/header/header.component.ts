@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit {
     // актуальное состояние пользователя
     this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
       this.isLogged = isLoggedIn;
+      this.authService.getUserName().subscribe(userName => { this.userName = userName.name })
     });
     
     
