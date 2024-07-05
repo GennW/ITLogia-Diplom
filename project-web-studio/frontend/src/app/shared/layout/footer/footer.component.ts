@@ -1,31 +1,36 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PopupComponent } from '../../components/popup/popup.component';
 import { ArticleService } from '../../services/article.service';
-import { DefaultResponseType } from 'src/types/default-response';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss']
 })
-export class FooterComponent implements OnInit {
+export class FooterComponent implements OnInit, OnDestroy {
   isOrder: boolean = false;
   isCallMeBack: boolean = true;
   phone: string = '';
   errorOccurred: boolean = false;
+  private subscription: Subscription | null = null;
 
 
-  constructor(private dialog: MatDialog, private articleService: ArticleService) { 
-  
+  constructor(private dialog: MatDialog, private articleService: ArticleService) {
+
 
   }
 
   ngOnInit(): void {
   }
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe footer dialog')
+  }
 
-  
-  openPopupOrder(orderTitle: string,buttonText: string): void {
+
+  openPopupOrder(orderTitle: string, buttonText: string): void {
     this.isCallMeBack = true;
     this.isOrder = true;
 
@@ -36,7 +41,7 @@ export class FooterComponent implements OnInit {
         buttonText: buttonText
       }
     });
-    dialogRef.afterClosed().subscribe(result => {
+    this.subscription = dialogRef.afterClosed().subscribe(result => {
       console.log('The popup was closed');
     });
   }

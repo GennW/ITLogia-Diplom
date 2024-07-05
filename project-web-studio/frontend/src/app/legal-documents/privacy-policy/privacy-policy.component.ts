@@ -9,22 +9,22 @@ import { Subscription } from 'rxjs';
 })
 export class PrivacyPolicyComponent implements OnInit, OnDestroy {
 
-  @ViewChild('privacy', {static: true}) private privacy!: ElementRef<HTMLElement>;
-  @ViewChild('personal', {static: true}) private personal!: ElementRef<HTMLElement>;
+  @ViewChild('privacy', { static: true }) private privacy!: ElementRef<HTMLElement>;
+  @ViewChild('personal', { static: true }) private personal!: ElementRef<HTMLElement>;
 
   private subscription: Subscription | null = null;
 
   constructor(private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
-   this.subscription = this.activatedRoute.queryParams.subscribe({
+    this.subscription = this.activatedRoute.queryParams.subscribe({
       next: (params => {
         console.log(params)
         if (params['section'] === 'privacy') {
-          this.privacy.nativeElement.scrollIntoView({behavior: 'smooth'})
+          this.privacy.nativeElement.scrollIntoView({ behavior: 'smooth' })
         }
         if (params['section'] === 'personal') {
-          this.personal.nativeElement.scrollIntoView({behavior: 'smooth'})
+          this.personal.nativeElement.scrollIntoView({ behavior: 'smooth' })
         }
       })
     })

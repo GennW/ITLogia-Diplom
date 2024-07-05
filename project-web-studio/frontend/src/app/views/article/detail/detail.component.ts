@@ -62,7 +62,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
-    
+
     // актуальное состояние пользователя
     this.subscription.add(
       this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
@@ -143,13 +143,13 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.subscription.add(
       forkJoin([
         this.articleService.getComments(offset, articleId)
-        .pipe(
-          catchError(error => {
-            console.error('Ошибка при получении комментариев:', error);
-            return of({ allCount: 0, comments: [] });
-            // Возвращаем пустой список комментариев в случае ошибки
-          })
-        ),
+          .pipe(
+            catchError(error => {
+              console.error('Ошибка при получении комментариев:', error);
+              return of({ allCount: 0, comments: [] });
+              // Возвращаем пустой список комментариев в случае ошибки
+            })
+          ),
         this.articleService.getActions(articleId).pipe(
           catchError(error => {
             console.error('Ошибка при получении действий комментариев:', error);
@@ -174,26 +174,26 @@ export class DetailComponent implements OnInit, OnDestroy {
       const actions = actionsRes.filter(action => action.comment === comment.id);
       if (actions.length) {
         actions.forEach(action => {
-            if (action.action === 'like') {
-                comment.isLikedByUser = true; // Устанавливаем, что пользователь поставил лайк
-                comment.reaction = 'like';
-              }
-            if (action.action === 'dislike') {
-                comment.isDislikedByUser = true; // Устанавливаем, что пользователь поставил дизлайк
-                comment.reaction = 'dislike';
-              }
+          if (action.action === 'like') {
+            comment.isLikedByUser = true; // Устанавливаем, что пользователь поставил лайк
+            comment.reaction = 'like';
+          }
+          if (action.action === 'dislike') {
+            comment.isDislikedByUser = true; // Устанавливаем, что пользователь поставил дизлайк
+            comment.reaction = 'dislike';
+          }
         });
         console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
       }
     });
-}
+  }
 
 
   prepareComments(commentRes: CommentType): void {
     this.response = {
       allCount: commentRes.comments.length,
       comments: commentRes.comments.map((comment) => {
-     
+
         // Обновляем количества лайков и дизлайков, предусматривая возможность null значений
         comment.likesCount = comment.likesCount || 0;
         comment.dislikesCount = comment.dislikesCount || 0;

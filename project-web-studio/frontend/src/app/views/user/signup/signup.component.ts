@@ -15,9 +15,9 @@ import { LoginResponseType } from 'src/types/login-response';
   styleUrls: ['./signup.component.scss']
 })
 export class SignupComponent implements OnInit {
-privacyLink = `${window.location.protocol}//${window.location.hostname}`;
-personalLink = `${window.location.protocol}//${window.location.hostname}`;
-private subscription: Subscription = new Subscription;
+  privacyLink = `${window.location.protocol}//${window.location.hostname}`;
+  personalLink = `${window.location.protocol}//${window.location.hostname}`;
+  private subscription: Subscription = new Subscription;
 
 
 
@@ -30,17 +30,17 @@ private subscription: Subscription = new Subscription;
   })
 
   constructor(private fb: FormBuilder, private authService: AuthService,
-    private _snackBar: MatSnackBar, private router: Router) { 
+    private _snackBar: MatSnackBar, private router: Router) {
 
-    }
+  }
 
   ngOnInit(): void {
     this.initPrivacyLink();
     this.initPersonalLink();
   }
 
-     
-  
+
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     console.log('unsubscribe main-component');
@@ -60,44 +60,44 @@ private subscription: Subscription = new Subscription;
   }
 
   signUp() {
-    if (this.signupForm.valid && this.signupForm.value.name && this.signupForm.value.email && this.signupForm.value.password 
+    if (this.signupForm.valid && this.signupForm.value.name && this.signupForm.value.email && this.signupForm.value.password
       && this.signupForm.value.agree) {
       this.subscription.add(this.authService.signup(this.signupForm.value.name, this.signupForm.value.email, this.signupForm.value.password)
-      .subscribe({
-        next: (data: DefaultResponseType | LoginResponseType) => {
-          let error = null;
-          if ((data as DefaultResponseType).error !== undefined) {
-            error = (data as DefaultResponseType).message;
+        .subscribe({
+          next: (data: DefaultResponseType | LoginResponseType) => {
+            let error = null;
+            if ((data as DefaultResponseType).error !== undefined) {
+              error = (data as DefaultResponseType).message;
+            }
+
+            const loginResponse = data as LoginResponseType;
+            if (!loginResponse.accessToken || !loginResponse.refreshToken || !loginResponse.userId) {
+              error = 'Ошибка регистрации';
+            }
+
+            if (error) {
+              this._snackBar.open(error);
+              throw new Error(error);
+            }
+
+            //set tokens
+            this.authService.setTokens(loginResponse.accessToken, loginResponse.refreshToken);
+            this.authService.userId = loginResponse.userId;
+
+            this._snackBar.open('Вы успешно зарегистрировались');
+            this.router.navigate(['/']);
+          },
+          error: (errorResponse: HttpErrorResponse) => {
+            if (errorResponse.error && errorResponse.message) {
+              this._snackBar.open(errorResponse.error.message)
+            } else {
+              this._snackBar.open('Ошибка регистрации')
+
+            }
           }
-
-          const loginResponse = data as LoginResponseType;
-          if (!loginResponse.accessToken || !loginResponse.refreshToken || !loginResponse.userId) {
-            error = 'Ошибка регистрации';
-          }
-
-          if (error) {
-            this._snackBar.open(error);
-            throw new Error(error);
-          }
-
-          //set tokens
-          this.authService.setTokens(loginResponse.accessToken, loginResponse.refreshToken);
-          this.authService.userId = loginResponse.userId;
-
-          this._snackBar.open('Вы успешно зарегистрировались');
-          this.router.navigate(['/']);
-        },
-        error: (errorResponse: HttpErrorResponse) => {
-          if (errorResponse.error && errorResponse.message) {
-            this._snackBar.open(errorResponse.error.message)
-          } else {
-            this._snackBar.open('Ошибка регистрации')
-
-          }
-        }
-      }));
+        }));
     }
-}
+  }
 
 
 }

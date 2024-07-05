@@ -1,5 +1,5 @@
 import {
- 
+
   Component,
   Input,
   OnDestroy,
@@ -23,10 +23,10 @@ export class ArticleCardComponent implements OnInit, OnDestroy {
   serverStaticPath = environment.serverStaticPath;
   private subscription: Subscription | null = null;
 
-  
-  constructor(private articleService: ArticleService, private router: Router) {}
 
-  ngOnInit(): void {}
+  constructor(private articleService: ArticleService, private router: Router) { }
+
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
@@ -34,7 +34,7 @@ export class ArticleCardComponent implements OnInit, OnDestroy {
   }
 
   onCardClick(article: any) {
-    this.articleService.getArticleDetail(article.url).subscribe((data) => {
+    this.subscription = this.articleService.getArticleDetail(article.url).subscribe((data) => {
       console.log(data);
       this.router.navigate(['/detail', article.url]);
     });

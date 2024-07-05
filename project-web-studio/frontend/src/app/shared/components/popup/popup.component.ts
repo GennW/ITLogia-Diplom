@@ -26,7 +26,7 @@ export class PopupComponent implements OnInit {
     phone: ['', [Validators.required]],
   })
 
-  private subscription: Subscription | null = null;
+  private subscription: Subscription = new Subscription;
 
   // В конструкторе компонента используем MAT_DIALOG_DATA для получения данных и MatDialogRef для возможности закрытия попапа
   constructor(@Inject(MAT_DIALOG_DATA) public data: PopupDataType,

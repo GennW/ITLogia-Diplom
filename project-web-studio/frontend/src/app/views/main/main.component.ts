@@ -15,7 +15,7 @@ export class MainComponent implements OnInit, OnDestroy {
   isOrder: boolean = false;
   isCallMeBack: boolean = false;
 
-private subscription: Subscription = new Subscription;
+  private subscription: Subscription = new Subscription;
 
   customOptions: OwlOptions = {
     loop: true,
@@ -23,7 +23,7 @@ private subscription: Subscription = new Subscription;
     touchDrag: false,
     pullDrag: false,
     dots: true, // Включаем точки
-  dotsEach: true, // Одинаковое количество точек, как и слайдов
+    dotsEach: true, // Одинаковое количество точек, как и слайдов
     navSpeed: 700,
     navText: ['', ''],
     responsive: {
@@ -39,7 +39,7 @@ private subscription: Subscription = new Subscription;
     touchDrag: false,
     pullDrag: false,
     margin: 25,
-    dots: false, 
+    dots: false,
     navSpeed: 700,
     navText: ['', ''],
     responsive: {
@@ -57,10 +57,10 @@ private subscription: Subscription = new Subscription;
   }
 
   topArticles: ArticleType[] = [];
-  
+
 
   constructor(private articleService: ArticleService, private dialog: MatDialog) { }
- 
+
   ngOnInit(): void {
     this.subscription.add(this.subscription?.add(this.articleService.getTopArticles()
       .subscribe({
@@ -71,15 +71,15 @@ private subscription: Subscription = new Subscription;
           console.error('An error occurred:', error);
         })
       })));
-   }
-   
-  
-   ngOnDestroy(): void {
-     this.subscription?.unsubscribe();
-     console.log('unsubscribe main-component');
-   }
+  }
 
-   openPopupOrder(orderTitle: string, placeholder: string, buttonText: string): void {
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+    console.log('unsubscribe main-component');
+  }
+
+  openPopupOrder(orderTitle: string, placeholder: string, buttonText: string): void {
     this.isOrder = true;
     this.isCallMeBack = false;
 
@@ -91,7 +91,7 @@ private subscription: Subscription = new Subscription;
         buttonText: buttonText
       }
     });
-    console.log('dialogRefdialogRef',dialogRef)
+    console.log('dialogRefdialogRef', dialogRef)
     this.subscription.add(dialogRef.afterClosed().subscribe(() => {
 
       console.log('The popup was closed');

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -10,7 +10,7 @@ import { DefaultResponseType } from 'src/types/default-response';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit,OnDestroy {
   isLogged: boolean = false;
   userName: string = '';
   private subscription: Subscription = new Subscription();
@@ -26,10 +26,14 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     // актуальное состояние пользователя
-    this.authService.isLogged$.subscribe((isLoggedIn: boolean) => {
+   this.subscription.add(this.authService.isLogged$
+    .subscribe((isLoggedIn: boolean) => {
       this.isLogged = isLoggedIn;
-      this.authService.getUserName().subscribe(userName => { this.userName = userName.name })
-    });
+      this.subscription.add(this.authService.getUserName()
+      .subscribe(userName => { this.userName = userName.name }))
+    }));
+   
+
     
     
     if (this.isLogged) {

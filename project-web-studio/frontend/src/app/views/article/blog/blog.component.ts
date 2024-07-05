@@ -23,7 +23,7 @@ export class BlogComponent implements OnInit, OnDestroy {
   appliedFilters: string[] = [];
   pages: number[] = [];
   currentPage: number = 1;
-  
+
   // для отписки от нескольких подписок
   private subscription: Subscription = new Subscription();
 
@@ -32,35 +32,35 @@ export class BlogComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-   this.subscription.add(this.activatedRoute.queryParams.subscribe(params => {
-    // Извлекаем параметр 'page' из запроса и преобразуем в число, устанавливаем значение по умолчанию - 1
-    this.currentPage = Number(params['page'] || 1);
-    
-    // Проверяем наличие параметра 'filters' в запросе
-    if (params['filters']) {
+    this.subscription.add(this.activatedRoute.queryParams.subscribe(params => {
+      // Извлекаем параметр 'page' из запроса и преобразуем в число, устанавливаем значение по умолчанию - 1
+      this.currentPage = Number(params['page'] || 1);
+
+      // Проверяем наличие параметра 'filters' в запросе
+      if (params['filters']) {
         // Если 'filters' существует, разбиваем его на массив фильтров по запятым и сохраняем в appliedFilters
         this.appliedFilters = params['filters'].split(',');
-    } 
-    // Загружаем статьи с учетом текущей страницы и выбранных фильтров
-    this.loadArticles(this.currentPage);
-    this.updateAppliedFilters();
-}));
+      }
+      // Загружаем статьи с учетом текущей страницы и выбранных фильтров
+      this.loadArticles(this.currentPage);
+      this.updateAppliedFilters();
+    }));
 
     // Загружаем категории статей
     this.loadCategories();
-}
+  }
 
-ngOnDestroy(): void {
-  this.subscription.unsubscribe();
-  console.log('unsubscribe')
-}
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+    console.log('unsubscribe')
+  }
 
   loadArticles(page: number): void {
     this.subscription.add(this.articleService.getArticles(page, this.appliedFilters).subscribe({
-      next: (data: {count: number, pages: number, items: ArticleType[]}) => {
+      next: (data: { count: number, pages: number, items: ArticleType[] }) => {
         this.articles = data.items;
         this.pagination(data);
-        
+
       },
       error: (error: any) => {
         console.error('Произошла ошибка:', error);
@@ -86,11 +86,11 @@ ngOnDestroy(): void {
       },
     }));
   }
- 
-  
+
+
   filterByCategory(category: string, index: number) {
     // Получаем значение item.name из typesOfArticles
-    const selectedCategory = this.typesOfArticles[index].name; 
+    const selectedCategory = this.typesOfArticles[index].name;
     // console.log('selectedCategory====',selectedCategory)
     this.typesOfArticles[index].isExpanded = !this.typesOfArticles[index].isExpanded;
 
@@ -108,14 +108,15 @@ ngOnDestroy(): void {
     // Обновляем параметры запроса URL с новыми appliedFilters
     this.router.navigate([], {
       relativeTo: this.activatedRoute,
-      queryParams: { filters: this.appliedFilters.join(','),
-      page: 1
+      queryParams: {
+        filters: this.appliedFilters.join(','),
+        page: 1
       }, // Преобразуем массив в строку с разделителем
       queryParamsHandling: 'merge',
-  });
-  // После обновления параметров запроса, загружаем статьи с учетом выбранных фильтров
-  // this.loadArticles(this.currentPage);
-  this.updateAppliedFilters();
+    });
+    // После обновления параметров запроса, загружаем статьи с учетом выбранных фильтров
+    // this.loadArticles(this.currentPage);
+    this.updateAppliedFilters();
   }
 
   updateAppliedFilters() {
@@ -127,7 +128,7 @@ ngOnDestroy(): void {
 
   getFilterName(url: string): string | undefined {
     const foundFilter = this.typesOfArticles.find(item => item.url === url);
-  
+
     if (foundFilter) {
       return foundFilter.name;
     } else {
@@ -135,51 +136,51 @@ ngOnDestroy(): void {
     }
     return undefined;
   }
-  
+
 
   toggleFilter() {
     this.filterOpen = !this.filterOpen;
   }
 
-// пагинация
-// Создаем метод для формирования массива страниц
-pagination(data: {count: number, pages: number}): void {
-  // Инициализируем массив страниц
-  this.pages = [];
+  // пагинация
+  // Создаем метод для формирования массива страниц
+  pagination(data: { count: number, pages: number }): void {
+    // Инициализируем массив страниц
+    this.pages = [];
 
-  // Заполняем массив значениями от 1 до data.pages
-  for (let i = 1; i <= data.pages; i++) {
-    this.pages.push(i);
+    // Заполняем массив значениями от 1 до data.pages
+    for (let i = 1; i <= data.pages; i++) {
+      this.pages.push(i);
+    }
   }
-}
 
-// Метод перехода на предыдущую страницу
-navigatePrevious(): void {
-  if (this.currentPage > 1) {
-    this.goToPage(this.currentPage - 1);
+  // Метод перехода на предыдущую страницу
+  navigatePrevious(): void {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
   }
-}
 
-// Метод перехода на следующую страницу
-navigateNext(): void {
-  if (this.currentPage < this.pages.length) {
-    this.goToPage(this.currentPage + 1);
+  // Метод перехода на следующую страницу
+  navigateNext(): void {
+    if (this.currentPage < this.pages.length) {
+      this.goToPage(this.currentPage + 1);
+    }
   }
-}
 
 
-// Метод для перехода на определенную страницу с использованием параметров запроса
-goToPage(page: number): void {
-  //  метод navigate роутера для перехода на ту же самую страницу с обновленными параметрами запроса
-  this.router.navigate([], {
-    // Определение параметров запроса, которые нужно обновить в URL
-    queryParams: { page: page },
-    // Указание режима обработки существующих параметров запроса при добавлении новых
-    queryParamsHandling: 'merge',
-    // Указание, что навигация относительно текущего активного маршрута
-    relativeTo: this.activatedRoute
-  });
-}
+  // Метод для перехода на определенную страницу с использованием параметров запроса
+  goToPage(page: number): void {
+    //  метод navigate роутера для перехода на ту же самую страницу с обновленными параметрами запроса
+    this.router.navigate([], {
+      // Определение параметров запроса, которые нужно обновить в URL
+      queryParams: { page: page },
+      // Указание режима обработки существующих параметров запроса при добавлении новых
+      queryParamsHandling: 'merge',
+      // Указание, что навигация относительно текущего активного маршрута
+      relativeTo: this.activatedRoute
+    });
+  }
 
 
 }

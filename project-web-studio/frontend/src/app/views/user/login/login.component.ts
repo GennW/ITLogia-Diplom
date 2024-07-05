@@ -28,9 +28,9 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
   }
-     
 
-  
+
+
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
     console.log('unsubscribe login-component');
@@ -61,7 +61,7 @@ export class LoginComponent implements OnInit {
             //set tokens
             this.authService.setTokens(loginResponse.accessToken, loginResponse.refreshToken);
             this.authService.userId = loginResponse.userId;
-            
+
 
             this._snackBar.open('Вы успешно авторизовались');
             this.router.navigate(['/'])
