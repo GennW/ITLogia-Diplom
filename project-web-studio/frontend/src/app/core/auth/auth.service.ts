@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, Subject, throwError } from 'rxjs';
 import { DefaultResponseType } from 'src/types/default-response';
 import { LoginResponseType } from 'src/types/login-response';
@@ -100,10 +100,8 @@ export class AuthService {
   }
 
   public getUserName(): Observable<{ id: string, name: string, email: string }> {
-    const tokens = this.getTokens();
-    const headers = new HttpHeaders().set('x-auth', tokens.accessToken || '');
 
-    return this.http.get<{ id: string, name: string, email: string }>(environment.api + 'users', { headers });
+    return this.http.get<{ id: string, name: string, email: string }>(environment.api + 'users');
   }
 
 }
