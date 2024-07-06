@@ -24,7 +24,7 @@ export class ArticleService {
     return this.http.get<CategoryArticleType[] | DefaultResponseType>(environment.api + 'categories')
   }
 
-  getArticles(page: number, categories: string[] = []): Observable<{count: number, pages: number, items: ArticleType[]}> {
+  getArticles(page: number, categories: string[] = []): Observable<{ count: number, pages: number, items: ArticleType[] }> {
 
     let params = `page=${page}`;
     categories.forEach(category => {
@@ -34,71 +34,23 @@ export class ArticleService {
     // Добавляем параметры запроса к URL
     const url = `${environment.api}articles?${params}`;
 
-    return this.http.get<{count: number, pages: number, items: ArticleType[]}>(url);
+    return this.http.get<{ count: number, pages: number, items: ArticleType[] }>(url);
   }
 
-  getComments(offset: number, articleId: string): Observable<CommentType> {
-
-    let params = `offset=${offset}&article=${articleId}`;
-    const url = `${environment.api}comments?${params}`;
-
-    return this.http.get<CommentType>(url);
-  }
-
-  getActions(articleId: string): Observable<CommentActionsType[]> {
-
-    // let params = `offset=${offset}&article=${articleId}`;
-    const url = `${environment.api}comments/article-comment-actions?articleId=${articleId}`;
-
-    return this.http.get<CommentActionsType[]>(url);
-  }
-
-  addComment(text: string, articleId: string): Observable<CommentType> {
-    const url = `${environment.api}comments`;
-    
-
-    // Создаем объект с данными для отправки
-    const commentData = {
-      text: text,
-      article: articleId
-    };
-
-    // Отправляем POST запрос с данными комментария и заголовками
-    return this.http.post<CommentType>(url, commentData);
-  }
-  
-  getArticle(): Observable<{count: number, pages: number, items: ArticleType[]}> {
-    return this.http.get<{count: number, pages: number, items: ArticleType[]}>(environment.api + 'articles')
+  getArticle(): Observable<{ count: number, pages: number, items: ArticleType[] }> {
+    return this.http.get<{ count: number, pages: number, items: ArticleType[] }>(environment.api + 'articles')
   }
 
   getArticleDetail(url: string) {
     return this.http.get(`${environment.api}articles/${url}`);
   }
 
-
-
-reactionsComment(commentId: string, action: string): Observable<any> {
-  const url = `${environment.api}comments/${commentId}/apply-action`;
-  
-  // Создаем объект с данными для отправки
-  const actionData = {
-    action: action
-  };
-
-  // Устанавливаем заголовки
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json'
-  });
-
-  // Отправляем POST запрос с данными действия
-  return this.http.post(url, actionData, { headers: headers });
-}
-
-    // Метод для отправки запроса от пользователя
+  // Метод для отправки запроса от пользователя
   addUserRequest(userRequest: UserRequestType): Observable<DefaultResponseType> {
     const url = `${environment.api}requests`;
 
     // Отправляем POST запрос с данными запроса
     return this.http.post<DefaultResponseType>(url, userRequest);
   }
+
 }

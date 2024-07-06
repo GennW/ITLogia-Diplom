@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Subscription, catchError, forkJoin, of } from 'rxjs';
 import { AuthService } from 'src/app/core/auth/auth.service';
 import { ArticleService } from 'src/app/shared/services/article.service';
+import { CommentsService } from 'src/app/shared/services/comments.service';
 import { LoaderService } from 'src/app/shared/services/loader.service';
 import { ArrayUtilsService } from 'src/app/utils/array-utils.service';
 import { DateFormatService } from 'src/app/utils/date-format.service';
@@ -49,7 +50,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private articleService: ArticleService,
-    private http: HttpClient,
+    private commentsService: CommentsService,
     private authService: AuthService,
     private arrayUtilsService: ArrayUtilsService,
     public dateFormatService: DateFormatService,
@@ -142,7 +143,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   getComments(offset: number, articleId: string) {
     this.subscription.add(
       forkJoin([
-        this.articleService.getComments(offset, articleId)
+        this.commentsService.getComments(offset, articleId)
           .pipe(
             catchError(error => {
               console.error('Ошибка при получении комментариев:', error);
@@ -150,7 +151,7 @@ export class DetailComponent implements OnInit, OnDestroy {
               // Возвращаем пустой список комментариев в случае ошибки
             })
           ),
-        this.articleService.getActions(articleId).pipe(
+        this.commentsService.getActions(articleId).pipe(
           catchError(error => {
             console.error('Ошибка при получении действий комментариев:', error);
             return of([]);
@@ -240,7 +241,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
     if (text && articleId) {
       this.subscription.add(
-        this.articleService.addComment(text, articleId).subscribe({
+        this.commentsService.addComment(text, articleId).subscribe({
           next: (response: any) => {
             console.log('Комментарий успешно добавлен:', response);
             this.commentTextElement.nativeElement.value = ''; // Очистит текстовое поле
@@ -266,7 +267,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     if (this.isLogged) {
       if (reaction === 'violate') {
         this.subscription.add(
-          this.articleService.reactionsComment(comment.id, reaction).subscribe({
+          this.commentsService.reactionsComment(comment.id, reaction).subscribe({
             next: (response: DefaultResponseType) => {
               if (!response.error) {
                 this.snackBar.open('Жалоба отправлена');
@@ -321,7 +322,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
         // Отправляем запрос на обновление реакции на сервер
         this.subscription.add(
-          this.articleService.reactionsComment(comment.id, reaction).subscribe({
+          this.commentsService.reactionsComment(comment.id, reaction).subscribe({
             next: (response) => {
               // Обработка успешного ответа от сервера
               console.log('Реакция успешно обновлена:', response);
