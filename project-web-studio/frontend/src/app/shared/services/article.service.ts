@@ -1,10 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CategoryArticleType } from 'src/types/categoties-articles.type copy';
-import { CommentActionsType } from 'src/types/comment-actions.type';
-import { CommentType } from 'src/types/comment.type';
 import { DefaultResponseType } from 'src/types/default-response';
 import { ArticleType } from 'src/types/top-articles.type';
 import { UserRequestType } from 'src/types/user-request.type';

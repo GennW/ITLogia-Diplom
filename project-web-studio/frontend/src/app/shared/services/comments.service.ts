@@ -33,7 +33,6 @@ export class CommentsService {
   addComment(text: string, articleId: string): Observable<CommentType> {
     const url = `${environment.api}comments`;
 
-
     // Создаем объект с данными для отправки
     const commentData = {
       text: text,

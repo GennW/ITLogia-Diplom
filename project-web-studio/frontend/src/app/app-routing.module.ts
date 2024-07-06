@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LayoutComponent } from './shared/layout/layout.component';
 import { MainComponent } from './views/main/main.component';
-import { BlogComponent } from './views/article/blog/blog.component';
 import { PrivacyPolicyComponent } from './legal-documents/privacy-policy/privacy-policy.component';
 
 const routes: Routes = [
