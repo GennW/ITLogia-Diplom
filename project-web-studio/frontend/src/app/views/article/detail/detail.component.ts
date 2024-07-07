@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import {
   Component,
   ElementRef,
@@ -31,7 +30,6 @@ export class DetailComponent implements OnInit, OnDestroy {
   // для отписки от нескольких подписок
   private subscription: Subscription = new Subscription();
 
-  // @Input() topArticle!: ArticleType;
   response!: CommentType;
   offsetValue = 0; // Пример значения для offset
   visibleComments!: any;
@@ -43,7 +41,6 @@ export class DetailComponent implements OnInit, OnDestroy {
   accessToken: string | null = null;
   userId: string | null = null;
   isLoading: boolean = false;
-  isAction: boolean = false;
   isLiked: boolean = false; // параметр для хранения информации о лайке
   isDisliked: boolean = false; // параметр для хранения информации о дизлайке
 
@@ -332,7 +329,6 @@ export class DetailComponent implements OnInit, OnDestroy {
               if (response.dislikesCount !== undefined) {
                 comment.dislikesCount = response.dislikesCount;
               }
-              // comment.isAction = true; 
             },
             error: (error) => {
               console.error(

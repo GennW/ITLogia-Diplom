@@ -35,7 +35,7 @@ export class ArticleCardComponent implements OnInit, OnDestroy {
 
   onCardClick(article: any) {
     this.subscription = this.articleService.getArticleDetail(article.url).subscribe((data) => {
-      console.log(data);
+      
       this.router.navigate(['/detail', article.url]);
     });
   }

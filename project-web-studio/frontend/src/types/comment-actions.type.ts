@@ -4,6 +4,6 @@ export type CommentActionsType = {
   
   comment: string;
   action: ActionType;
-  isAction?: boolean
+  
 }
 
