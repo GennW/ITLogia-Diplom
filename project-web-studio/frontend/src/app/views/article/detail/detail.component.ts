@@ -282,15 +282,29 @@ export class DetailComponent implements OnInit, OnDestroy {
         // Проверка, была ли выбрана такая же реакция на комментарий
         if (comment.reaction === reaction && comment.reactedBy === userId) {
           // Если пользователь кликнул на уже выбранную реакцию, отменяем ее
-          comment.reaction = null;
-          if (reaction === 'like' && comment.likesCount > 0) {
-            comment.likesCount--;
-            comment.isLikedByUser = false;
-          } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
-            comment.dislikesCount--;
-            comment.isDislikedByUser = false;
-          }
-          comment.reactedBy = null; // Сбрасываем идентификатор пользователя
+          this.subscription.add(
+            this.commentsService.reactionsComment(comment.id, reaction).subscribe({
+              next: (response: DefaultResponseType) => {
+                if (!response.error) {
+                  comment.reaction = null;
+                  if (reaction === 'like' && comment.likesCount > 0) {
+                    comment.likesCount--;
+                    comment.isLikedByUser = false;
+                  } else if (reaction === 'dislike' && comment.dislikesCount > 0) {
+                    comment.dislikesCount--;
+                    comment.isDislikedByUser = false;
+                  }
+                  comment.reactedBy = null; // Сбрасываем идентификатор пользователя
+                  console.log('Реакция успешно отменена');
+                } else {
+                  console.error('Ошибка при отмене реакции:', response.error);
+                }
+              },
+              error: (error) => {
+                console.error('Ошибка при отмене реакции:', error);
+              },
+            })
+          );
           return;
         } else {
           // Уменьшаем количество предыдущей реакции, если есть
@@ -303,7 +317,7 @@ export class DetailComponent implements OnInit, OnDestroy {
               comment.isDislikedByUser = false;
             }
           }
-
+  
           // Устанавливаем новую реакцию
           comment.reaction = reaction;
           // Увеличиваем соответствующее количество
@@ -315,50 +329,50 @@ export class DetailComponent implements OnInit, OnDestroy {
             comment.isDislikedByUser = true;
           }
           comment.reactedBy = userId; // Устанавливаем идентификатор пользователя
-        }
-
-        // Отправляем запрос на обновление реакции на сервер
-        this.subscription.add(
-          this.commentsService.reactionsComment(comment.id, reaction).subscribe({
-            next: (response) => {
-              // Обработка успешного ответа от сервера
-              console.log('Реакция успешно обновлена:', response);
-              if (response.likesCount !== undefined) {
-                comment.likesCount = response.likesCount;
-              }
-              if (response.dislikesCount !== undefined) {
-                comment.dislikesCount = response.dislikesCount;
-              }
-            },
-            error: (error) => {
-              console.error(
-                `Ошибка при отправке ${reaction} к комментарию:`,
-                error
-              );
-
-              // Отменяем изменения в реакции в случае ошибки
-              if (comment.reactedBy === userId) {
-                comment.reaction = null;
-                if (reaction === 'like') {
-                  if (comment.likesCount > 0) {
-                    comment.likesCount--;
-                    comment.isLikedByUser = false;
-                  }
-                } else if (reaction === 'dislike') {
-                  if (comment.dislikesCount > 0) {
-                    comment.dislikesCount--;
-                    comment.isDislikedByUser = false;
-                  }
+  
+          // Отправляем запрос на обновление реакции на сервер
+          this.subscription.add(
+            this.commentsService.reactionsComment(comment.id, reaction).subscribe({
+              next: (response) => {
+                // Обработка успешного ответа от сервера
+                console.log('Реакция успешно обновлена:', response);
+                if (response.likesCount !== undefined) {
+                  comment.likesCount = response.likesCount;
                 }
-                comment.reactedBy = null;
-              }
-            },
-          })
-        );
-
-        // Проверка, чтобы не уведичивать счетчик при повторном клике
-        if (comment.reaction === reaction) {
-          this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
+                if (response.dislikesCount !== undefined) {
+                  comment.dislikesCount = response.dislikesCount;
+                }
+              },
+              error: (error) => {
+                console.error(
+                  `Ошибка при отправке ${reaction} к комментарию:`,
+                  error
+                );
+  
+                // Отменяем изменения в реакции в случае ошибки
+                if (comment.reactedBy === userId) {
+                  comment.reaction = null;
+                  if (reaction === 'like') {
+                    if (comment.likesCount > 0) {
+                      comment.likesCount--;
+                      comment.isLikedByUser = false;
+                    }
+                  } else if (reaction === 'dislike') {
+                    if (comment.dislikesCount > 0) {
+                      comment.dislikesCount--;
+                      comment.isDislikedByUser = false;
+                    }
+                  }
+                  comment.reactedBy = null;
+                }
+              },
+            })
+          );
+  
+          // Проверка, чтобы не уведичивать счетчик при повторном клике
+          if (comment.reaction === reaction) {
+            this.snackBar.open('Ваш голос учтен'); // Уведомление для пользователя
+          }
         }
       }
     } else {
