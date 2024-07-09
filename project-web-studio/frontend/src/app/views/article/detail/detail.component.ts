@@ -191,6 +191,9 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.response = {
       allCount: commentRes.comments.length,
       comments: commentRes.comments.map((comment) => {
+        // Инициализация значения reactedBy на основе вошедшего в систему пользователя
+        comment.reactedBy = this.userId;
+        console.log('comment.reactedBy==', comment.reactedBy);
 
         // Обновляем количества лайков и дизлайков, предусматривая возможность null значений
         comment.likesCount = comment.likesCount || 0;
