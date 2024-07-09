@@ -32,7 +32,7 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   response!: CommentType;
   offsetValue = 0; // Пример значения для offset
-  visibleComments!: any;
+  visibleComments!: CommentType['comments'][0][];
   hideLoadMoreClass: string = '';
   isLogged: boolean = false;
   article!: ArticleType;
@@ -85,7 +85,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           next: (userData: { id: string }) => {
             // получаем id пользователя
             this.userId = userData.id;
-            console.log('userId в компоненте DetailComponent:', this.userId);
+            // console.log('userId в компоненте DetailComponent:', this.userId);
           },
           error: () => {
             // this.authService.removeTokens();
@@ -108,6 +108,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           .getArticleDetail(params['url'])
           .subscribe((data: any) => {
             this.article = data;
+            console.log('dataANY------------', data)
             this.getTopArticles();
             this.getComments(this.offsetValue, this.article.id);
           });
@@ -181,7 +182,7 @@ export class DetailComponent implements OnInit, OnDestroy {
             comment.reaction = 'dislike';
           }
         });
-        console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
+        // console.log('actions for comment', comment.id, comment.isLikedByUser, comment.isDislikedByUser, actions);
       }
     });
   }
@@ -193,7 +194,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       comments: commentRes.comments.map((comment) => {
         // Инициализация значения reactedBy на основе вошедшего в систему пользователя
         comment.reactedBy = this.userId;
-        console.log('comment.reactedBy==', comment.reactedBy);
+        // console.log('comment.reactedBy==', comment.reactedBy);
 
         // Обновляем количества лайков и дизлайков, предусматривая возможность null значений
         comment.likesCount = comment.likesCount || 0;
@@ -202,6 +203,7 @@ export class DetailComponent implements OnInit, OnDestroy {
       }),
     };
     this.visibleComments = this.response.comments.slice(0, 3); // Отображаем только первые 3 комментария
+    // console.log('visibleComments===------',this.visibleComments)
   }
 
   loadMoreComments() {
@@ -242,8 +244,8 @@ export class DetailComponent implements OnInit, OnDestroy {
     if (text && articleId) {
       this.subscription.add(
         this.commentsService.addComment(text, articleId).subscribe({
-          next: (response: any) => {
-            console.log('Комментарий успешно добавлен:', response);
+          next: (response: CommentType) => {
+            // console.log('Комментарий успешно добавлен:', response);
             this.commentTextElement.nativeElement.value = ''; // Очистит текстовое поле
             this.getComments(this.offsetValue, articleId); // Обновит комментарии,
           },
@@ -262,7 +264,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   reactToComment(
     comment: CommentType['comments'][0],
     reaction: 'like' | 'dislike' | 'violate',
-    userId: any
+    userId: string | null
   ): void {
     if (this.isLogged) {
       if (reaction === 'violate') {
@@ -297,8 +299,10 @@ export class DetailComponent implements OnInit, OnDestroy {
                     comment.dislikesCount--;
                     comment.isDislikedByUser = false;
                   }
+                  this.snackBar.open(`Ваш ${reaction} отменён`);
+
                   comment.reactedBy = null; // Сбрасываем идентификатор пользователя
-                  console.log('Реакция успешно отменена');
+                  // console.log('Реакция успешно отменена');
                 } else {
                   console.error('Ошибка при отмене реакции:', response.error);
                 }
@@ -338,7 +342,7 @@ export class DetailComponent implements OnInit, OnDestroy {
             this.commentsService.reactionsComment(comment.id, reaction).subscribe({
               next: (response) => {
                 // Обработка успешного ответа от сервера
-                console.log('Реакция успешно обновлена:', response);
+                // console.log('Реакция успешно обновлена:', response);
                 if (response.likesCount !== undefined) {
                   comment.likesCount = response.likesCount;
                 }
